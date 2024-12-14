@@ -1,12 +1,20 @@
 import React from 'react';
-import CierraSesion from './CierraSesion'; // Actualizado a CierraSesion
+import CrearBox from './CrearBox';
+import CrearPasillo from './CrearPasillo';
 
 const Administrador = () => {
     return (
         <div>
-            <h2>Administrador</h2>
-            <p>Bienvenido administrador. Aquí puedes gestionar pasillos y boxes.</p>
-            <CierraSesion setUsuarioLogueado={() => { }} /> {/* Actualizado para usar CierraSesion */}
+            <h1>Panel de Administración</h1>
+            <div>
+                <h2>Crear Box Clínico</h2>
+                <CrearBox />
+            </div>
+
+            <div>
+                <h2>Crear Pasillo</h2>
+                <CrearPasillo />
+            </div>
         </div>
     );
 };
