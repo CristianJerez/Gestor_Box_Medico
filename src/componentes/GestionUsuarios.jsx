@@ -1,152 +1,157 @@
-// GestionUsuarios.jsx
 import React, { useState, useEffect } from 'react';
-import { db } from '../FirebaseConfig'; // Importa la configuración de Firebase
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import './GestionUsuarios.css';
+import { collection, addDoc, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { db } from '../FirebaseConfig';
 
 const GestionUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
-    const [nuevoUsuario, setNuevoUsuario] = useState({ email: '', password: '', role: 'solicitante' });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', contraseña: '', rol: false });
+    const [errores, setErrores] = useState({});
+    const [editando, setEditando] = useState(null);
 
-    // Cargar usuarios desde Firestore
+    const usuariosCollectionRef = collection(db, 'usuarios');
+
+    // Leer usuarios desde Firestore
     useEffect(() => {
-        const fetchUsuarios = async () => {
-            setLoading(true);
+        const obtenerUsuarios = async () => {
             try {
-                const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
-                const usuariosList = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setUsuarios(usuariosList);
+                const data = await getDocs(usuariosCollectionRef);
+                setUsuarios(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
             } catch (error) {
-                setError('Error al cargar usuarios: ' + error.message);
-            } finally {
-                setLoading(false);
+                console.error('Error al obtener usuarios:', error);
             }
         };
-
-        fetchUsuarios();
+        obtenerUsuarios();
     }, []);
 
-    // Crear un nuevo usuario
-    const handleCrearUsuario = async () => {
-        setError('');
-        // Validación de campos
-        if (!nuevoUsuario.email || !nuevoUsuario.role) {
-            setError('Por favor, completa todos los campos antes de crear un usuario.');
-            return;
+    // Validar formulario
+    const validarFormulario = () => {
+        let errores = {};
+        const nombreRegex = /^[a-zA-Z\s]{6,}$/; // Solo letras y al menos 6 caracteres
+        const contraseñaRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/; // Alfanumérica y al menos 8 caracteres
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación de formato de email
+
+        if (!nombreRegex.test(nuevoUsuario.nombre)) {
+            errores.nombre = 'El nombre debe contener solo letras y al menos 6 caracteres.';
+        }
+        if (!contraseñaRegex.test(nuevoUsuario.contraseña)) {
+            errores.contraseña = 'La contraseña debe ser alfanumérica y tener al menos 8 caracteres.';
+        }
+        if (!emailRegex.test(nuevoUsuario.email)) {
+            errores.email = 'El correo electrónico no es válido.';
         }
 
-        // Validar formato de correo
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(nuevoUsuario.email)) {
-            setError('Por favor, ingresa un correo electrónico válido.');
-            return;
-        }
+        setErrores(errores);
+        return Object.keys(errores).length === 0;
+    };
+
+    // Crear o actualizar usuario
+    const guardarUsuario = async () => {
+        if (!validarFormulario()) return;
 
         try {
-            await addDoc(collection(db, 'usuarios'), {
-                email: nuevoUsuario.email,
-                role: nuevoUsuario.role,
-                status: 'activo',
-            });
-            alert('Usuario creado con éxito');
-            setNuevoUsuario({ email: '', password: '', role: 'solicitante' });
-            const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
-            const usuariosList = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setUsuarios(usuariosList);
+            const userId = editando || `USR-${Date.now()}`; // Genera un ID único si no está editando
+
+            if (editando) {
+                await updateDoc(doc(db, 'usuarios', editando), { ...nuevoUsuario });
+                setUsuarios((prev) =>
+                    prev.map((usuario) =>
+                        usuario.id === editando ? { ...usuario, ...nuevoUsuario } : usuario
+                    )
+                );
+                setEditando(null);
+            } else {
+                await addDoc(usuariosCollectionRef, { ...nuevoUsuario, id: userId });
+                setUsuarios((prev) => [...prev, { ...nuevoUsuario, id: userId }]);
+            }
+
+            setNuevoUsuario({ nombre: '', email: '', contraseña: '', rol: false });
+            setErrores({});
         } catch (error) {
-            setError('Error al crear el usuario: ' + error.message);
+            console.error('Error al guardar usuario:', error);
         }
     };
 
     // Eliminar usuario
-    const handleEliminarUsuario = async (id) => {
-        if (!window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-            return;
-        }
-
+    const eliminarUsuario = async (id) => {
         try {
             await deleteDoc(doc(db, 'usuarios', id));
-            alert('Usuario eliminado con éxito');
-            setUsuarios(usuarios.filter(user => user.id !== id));
+            setUsuarios((prev) => prev.filter((usuario) => usuario.id !== id));
         } catch (error) {
-            alert('Error al eliminar el usuario: ' + error.message);
+            console.error('Error al eliminar usuario:', error);
         }
     };
 
-    // Actualizar rol del usuario
-    const handleActualizarUsuario = async (id, nuevoRol) => {
-        try {
-            await updateDoc(doc(db, 'usuarios', id), { role: nuevoRol });
-            alert('Usuario actualizado con éxito');
-            setUsuarios(usuarios.map(user => user.id === id ? { ...user, role: nuevoRol } : user));
-        } catch (error) {
-            alert('Error al actualizar el usuario: ' + error.message);
-        }
+    // Iniciar edición de usuario
+    const editarUsuario = (usuario) => {
+        setNuevoUsuario({
+            nombre: usuario.nombre,
+            email: usuario.email,
+            contraseña: '',
+            rol: usuario.rol
+        });
+        setEditando(usuario.id);
     };
 
     return (
-        <div>
+        <div className="gestion-usuarios">
             <h1>Gestión de Usuarios</h1>
+            <div className="formulario">
+                <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={nuevoUsuario.nombre}
+                    onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })}
+                />
+                {errores.nombre && <p className="error">{errores.nombre}</p>}
 
-            {/* Mostrar errores */}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-
-            {/* Formulario para crear usuarios */}
-            <div>
-                <h2>Crear Usuario</h2>
                 <input
                     type="email"
-                    placeholder="Correo electrónico"
+                    placeholder="Email"
                     value={nuevoUsuario.email}
                     onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })}
                 />
-                <select
-                    value={nuevoUsuario.role}
-                    onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, role: e.target.value })}
-                >
-                    <option value="solicitante">Solicitante</option>
-                    <option value="admin">Administrador</option>
-                </select>
-                <button onClick={handleCrearUsuario}>Crear Usuario</button>
+                {errores.email && <p className="error">{errores.email}</p>}
+
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={nuevoUsuario.contraseña}
+                    onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, contraseña: e.target.value })}
+                />
+                {errores.contraseña && <p className="error">{errores.contraseña}</p>}
+
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={nuevoUsuario.rol}
+                        onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.checked })}
+                    />
+                    ¿Es administrador?
+                </label>
+                <div className="botones">
+                    <button onClick={guardarUsuario}>{editando ? 'Actualizar' : 'Guardar'}</button>
+                    <button onClick={() => setNuevoUsuario({ nombre: '', email: '', contraseña: '', rol: false })}>Cancelar</button>
+                </div>
             </div>
 
-            {/* Indicador de carga */}
-            {loading ? (
-                <p>Cargando usuarios...</p>
-            ) : (
-                <div>
-                    <h2>Lista de Usuarios</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {usuarios.map((user) => (
-                                <tr key={user.id}>
-                                    <td>{user.email}</td>
-                                    <td>
-                                        <select
-                                            value={user.role}
-                                            onChange={(e) => handleActualizarUsuario(user.id, e.target.value)}
-                                        >
-                                            <option value="solicitante">Solicitante</option>
-                                            <option value="admin">Administrador</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button onClick={() => handleEliminarUsuario(user.id)}>Eliminar</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+            <div className="lista-usuarios">
+                <h2>Lista de Usuarios</h2>
+                {usuarios.map((usuario) => (
+                    <div key={usuario.id} className="usuario">
+                        <p>
+                            <strong>ID:</strong> {usuario.id}<br />
+                            <strong>Nombre:</strong> {usuario.nombre}<br />
+                            <strong>Email:</strong> {usuario.email}<br />
+                            <strong>Rol:</strong> {usuario.rol ? 'Administrador' : 'Usuario'}
+                        </p>
+                        <div className="acciones">
+                            <button onClick={() => editarUsuario(usuario)}>Editar</button>
+                            <button onClick={() => eliminarUsuario(usuario.id)}>Eliminar</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

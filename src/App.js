@@ -1,12 +1,17 @@
-import React, { useEffect, useContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { auth } from "./FirebaseConfig";
-import { UserContext } from "./context/UserContext";
 import Acceso from './componentes/Acceso';
 import Administrador from './componentes/Administrador';
-import Solicitante from './componentes/Solicitante';
 import CierraSesion from './componentes/CierraSesion';
-import SolicitarBox from './componentes/SolicitarBox'; // Importamos el componente
+import GestionBox from "./componentes/GestionBox";
+import GestionPasillos from "./componentes/GestionPasillos";
+import GestionUsuarios from "./componentes/GestionUsuarios";
+import MisReservas from "./componentes/MisReservas";
+import OcupacionBoxes from "./componentes/OcupacionBoxes";
+import ReservarBox from "./componentes/ReservarBox";
+import Solicitante from './componentes/Solicitante';
+import { UserContext } from "./context/UserContext";
 
 function App() {
   const { usuarioLogueado, usuarioRol, setUsuarioLogueado, setUsuarioRol } = useContext(UserContext);
@@ -45,15 +50,46 @@ function App() {
         element={usuarioLogueado && usuarioRol === 'solicitante' ? <Solicitante /> : <Navigate to="/" />}
       />
 
-      {/* Ruta para solicitar un box */}
+      {/* Ruta para la gestion de usuarios */}
       <Route
-        path="/solicitar-box"
-        element={usuarioLogueado && usuarioRol === 'solicitante' ? <SolicitarBox /> : <Navigate to="/" />}
+        path="/gestion-usuarios"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <GestionUsuarios /> : <Navigate to="/" />}
+      />
+
+      {/* Ruta para la gestion de pasillos */}
+      <Route
+        path="/gestion-pasillos"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <GestionPasillos /> : <Navigate to="/" />}
+      />
+
+      {/* Ruta para gestionar un box */}
+      <Route
+        path="/gestion-box"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <GestionBox /> : <Navigate to="/" />}
+      />
+
+      {/* Ruta para reservar un box */}
+      <Route
+        path="/reservar-box"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <ReservarBox /> : <Navigate to="/" />}
+      />
+
+      {/* Ruta para reservar un box */}
+      <Route
+        path="/ocupacion-boxes"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <OcupacionBoxes /> : <Navigate to="/" />}
+      />
+
+            {/* Ruta para ver mis reservas*/}
+            <Route
+        path="/mis-reservas"
+        element={usuarioLogueado && usuarioRol === 'solicitante' ? <MisReservas /> : <Navigate to="/" />}
       />
 
       {/* Ruta para cerrar sesión */}
       <Route path="/cierra-sesion" element={<CierraSesion />} />
     </Routes>
+
   );
 }
 
