@@ -1,0 +1,58 @@
+.pantalla {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.acceso-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.acceso-container h1 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.acceso-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.acceso-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.acceso-container button:hover {
+    background-color: #555;
+}
+
+@media (max-width: 768px) {
+    .acceso-container {
+        padding: 15px;
+    }
+
+    .acceso-container input,
+    .acceso-container button {
+        padding: 8px;
+    }
+}

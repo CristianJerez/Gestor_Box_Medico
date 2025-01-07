@@ -36,22 +36,25 @@ const OcupacionBoxes = () => {
     }, []);
 
     // Calcular porcentaje de ocupación diaria por box
-    const calcularPorcentajeOcupacionBox = (box) => {
-        const reservasBox = reservas.filter((reserva) => reserva.boxId === box.id);
+    const calcularPorcentajeOcupacionBox = (box, fecha) => {
+        const reservasBox = reservas.filter(
+            (reserva) => reserva.boxId === box.id && reserva.fecha === fecha
+        );
         const tiempoTotal = calcularDiferenciaHoras(box.horaInicio, box.horaFin);
         const tiempoOcupado = reservasBox.reduce((acumulado, reserva) => {
             return acumulado + calcularDiferenciaHoras(reserva.horaInicio, reserva.horaFin);
         }, 0);
 
-        return Math.round((tiempoOcupado / tiempoTotal) * 100);
+        return Math.round((tiempoOcupado / tiempoTotal) * 100) || 0;
     };
 
     // Calcular promedio de ocupación diaria por pasillo
     const calcularOcupacionPasillos = (boxes, reservas) => {
         const pasillos = {};
+        const fechaHoy = new Date().toISOString().split("T")[0];
 
         boxes.forEach((box) => {
-            const porcentajeOcupacion = calcularPorcentajeOcupacionBox(box);
+            const porcentajeOcupacion = calcularPorcentajeOcupacionBox(box, fechaHoy);
 
             if (!pasillos[box.pasilloId]) {
                 pasillos[box.pasilloId] = {
@@ -78,6 +81,8 @@ const OcupacionBoxes = () => {
         return (hFin + mFin / 60) - (hInicio + mInicio / 60);
     };
 
+    const fechaHoy = new Date().toISOString().split("T")[0];
+
     return (
         <div>
             <h1>Ocupación de Boxes y Pasillos</h1>
@@ -85,7 +90,7 @@ const OcupacionBoxes = () => {
 
             <h2>Boxes</h2>
             {boxes.map((box) => {
-                const porcentajeOcupacion = calcularPorcentajeOcupacionBox(box);
+                const porcentajeOcupacion = calcularPorcentajeOcupacionBox(box, fechaHoy);
                 return (
                     <div key={box.id} style={{ border: "1px solid black", margin: "10px", padding: "10px" }}>
                         <p><strong>Box:</strong> {box.numero}</p>
