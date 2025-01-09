@@ -183,7 +183,6 @@ const GestionUsuarios = () => {
   useEffect(() => {
     getUsuarios();
   }, []);
-
   // Validar formulario
   const validarFormulario = () => {
     let errores = {};

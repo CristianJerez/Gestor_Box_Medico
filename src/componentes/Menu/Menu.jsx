@@ -5,6 +5,7 @@ import { GestionPasillo } from "../GestionPasillos/GestionPasillos";
 import { GestionUsuarios } from "../GestionUsuarios/GestionUsuarios";
 import { MenuAdministrador } from "./MenuAdministrador";
 import { MenuSolicitante } from "./MenuSolicitante";
+import { ReservarBox } from "../ReservarBox"
 
 import "./Menu.css";
 
@@ -44,7 +45,7 @@ function Menu() {
                 {renderizar === "gestionPasillo" && <GestionPasillo />}
                 {renderizar === "gestionBox" && <GestionBox />}
                 {/* {renderizar === "verSolicitudes" && <VerSolicitudes />} */}
-                {/* {renderizar === "solicitarBox" && <SolicitarBox />} */} 
+                {renderizar === "ReservarBox" && <ReservarBox />} 
             </main>
         </div>
     );

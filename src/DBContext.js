@@ -8,55 +8,6 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "./FirebaseConfig";
 
-const Usuarios = [
-  {
-    email: "pancho@chile.cl",
-    password: "ab123456",
-    role: "admin",
-  },
-  {
-    email: "lolo@chile.cl",
-    password: "ab123456",
-    role: "solicitante",
-  },
-];
-
-const Boxes = [
-  {
-    id: 1,
-    name: "Box 1",
-    pasillo: "A",
-    estado: "Disponible",
-    solicitante: "",
-    id_pasillo: 1,
-  },
-  {
-    id: 2,
-    name: "Box 2",
-    pasillo: "A",
-    estado: "Disponible",
-    solicitante: "",
-    id_pasillo: 1,
-  },
-];
-
-const Solicitudes = [{}];
-
-const Pasillos = [
-  {
-    id: 1,
-    name: "Pasillo A",
-    estado: "Disponible",
-    solicitante: "",
-  },
-  {
-    id: 2,
-    name: "Pasillo B",
-    estado: "Disponible",
-    solicitante: "",
-  },
-];
-
 const DBContext = {
   async login(email, password) {
     try {
@@ -108,40 +59,30 @@ const DBContext = {
     // }
   },
 
-  async getPasillo() {
-    const pasillosCollectionRef = collection(db, "pasillos");
-    const data = await getDocs(pasillosCollectionRef);
-    const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    return response;
-  },
-
-  async getPasillos() {
-    const pasillosCollectionRef = collection(db, "pasillos");
-    const data = await getDocs(pasillosCollectionRef);
-    const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    return response;
-  },
-
   async getUsers() {
-    return Usuarios;
+    const pasillosCollectionRef = collection(db, "usuarios");
+    const data = await getDocs(pasillosCollectionRef);
+    const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    return response;
   },
 
-  async addUser(email, password, role) {
-    const user = Usuarios.find((user) => user.email === email);
-    if (user) {
-      throw new Error("Usuario ya existe");
-    } else {
-      Usuarios.push({ email, password, role });
-      return true;
-    }
+  async addUser(nuevoUsuario) {
+    const CollectionRef = collection(db, "usuarios");
+    await addDoc(CollectionRef, nuevoUsuario);
+    console.log("Usuario creado con éxito.");
+    return true;
   },
-  async deleteUser(email) {
-    const user = Usuarios.find((user) => user.email === email);
-    if (user) {
-      Usuarios.splice(Usuarios.indexOf(user), 1);
-      return true;
-    } else {
-      throw new Error("Usuario no existe");
+
+  async editUser(editando, nuevo) {
+    await updateDoc(doc(db, "usuarios", editando), nuevo);
+    console.log("Usuario actualizado con éxito.");
+  },
+
+  async deleteUser(id) {
+    try {
+      await deleteDoc(doc(db, "usuarios", id));
+    } catch (error) {
+      console.error("Error al eliminar el usuario:", error);
     }
   },
 
@@ -167,43 +108,56 @@ const DBContext = {
   async deleteBox(id) {
     try {
       await deleteDoc(doc(db, "boxes", id));
-      alert("Box eliminado con éxito.");
     } catch (error) {
       console.error("Error al eliminar el box:", error);
-      alert("Error al eliminar el box.");
     }
   },
 
-  // async getPasillos() {
-  //     return Pasillos;
-  // },
-  async addSolicitud(solicitud) {
-    Solicitudes.push(solicitud);
-    return true;
-  },
-  async deleteSolicitud(id) {
-    const solicitud = Solicitudes.find((solicitud) => solicitud.id === id);
-    if (solicitud) {
-      Solicitudes.splice(Solicitudes.indexOf(solicitud), 1);
-      return true;
-    } else {
-      throw new Error("Solicitud no existe");
-    }
+  async getPasillos() {
+    const pasillosCollectionRef = collection(db, "pasillos");
+    const data = await getDocs(pasillosCollectionRef);
+    const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    return response;
   },
 
   async addPasillo(pasillo) {
-    Pasillos.push(pasillo);
+    const boxesCollectionRef = collection(db, "pasillos");
+    await addDoc(boxesCollectionRef, pasillo);
+    console.log("Pasillo creado con éxito.");
     return true;
   },
+
+  async editPasillo(editando, nuevo) {
+    await updateDoc(doc(db, "pasillos", editando), nuevo);
+    console.log("Pasillo actualizado con éxito.");
+  },
+
   async deletePasillo(id) {
-    const pasillo = Pasillos.find((pasillo) => pasillo.id === id);
-    if (pasillo) {
-      Pasillos.splice(Pasillos.indexOf(pasillo), 1);
-      return true;
-    } else {
-      throw new Error("Pasillo no existe");
+    try {
+      await deleteDoc(doc(db, "pasillos", id));
+    } catch (error) {
+      console.error("Error al eliminar el pasillo:", error);
     }
   },
-};
 
+async obtenerDatosPasillo (pasilloId) {
+  try {
+    const pasilloDocRef = doc(db, "pasillos", pasilloId);
+    const pasilloDoc = await getDoc(pasilloDocRef);
+
+    if (pasilloDoc.exists()) {
+      return {
+        numero: pasilloDoc.data().numero_pasillo,
+        nombre: pasilloDoc.data().nombre,
+      };
+    } else {
+      return { numero: "Desconocido", nombre: "Desconocido" };
+    }
+  } catch (error) {
+    console.error("Error al obtener datos del pasillo:", error.message);
+    return { numero: "Desconocido", nombre: "Desconocido" };
+  }
+},
+
+};
 export { DBContext };

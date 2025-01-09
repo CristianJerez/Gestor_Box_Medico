@@ -6,9 +6,9 @@ function MenuSolicitante(props) {
             <h1>Menu solicitante</h1>
             <ul className="menu-listado">
                 <li>
-                    <button onClick={() => props.setRenderizar("solicitarBox")}>
+                    <button onClick={() => props.setRenderizar("ReservarBox")}>
                         {" "}
-                        Solicitar box
+                        Reservar box
                     </button>
                 </li>
                 <li>

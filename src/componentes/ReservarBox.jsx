@@ -29,24 +29,24 @@ const ReservarBox = () => {
     const reservasCollectionRef = collection(db, "reservas");
 
     // Función para obtener datos del pasillo
-    const obtenerDatosPasillo = async (pasilloId) => {
-        try {
-            const pasilloDocRef = doc(db, "pasillos", pasilloId);
-            const pasilloDoc = await getDoc(pasilloDocRef);
+    // const obtenerDatosPasillo = async (pasilloId) => {
+    //     try {
+    //         const pasilloDocRef = doc(db, "pasillos", pasilloId);
+    //         const pasilloDoc = await getDoc(pasilloDocRef);
 
-            if (pasilloDoc.exists()) {
-                return {
-                    numero: pasilloDoc.data().numero_pasillo,
-                    nombre: pasilloDoc.data().nombre,
-                };
-            } else {
-                return { numero: "Desconocido", nombre: "Desconocido" };
-            }
-        } catch (error) {
-            console.error("Error al obtener datos del pasillo:", error.message);
-            return { numero: "Desconocido", nombre: "Desconocido" };
-        }
-    };
+    //         if (pasilloDoc.exists()) {
+    //             return {
+    //                 numero: pasilloDoc.data().numero_pasillo,
+    //                 nombre: pasilloDoc.data().nombre,
+    //             };
+    //         } else {
+    //             return { numero: "Desconocido", nombre: "Desconocido" };
+    //         }
+    //     } catch (error) {
+    //         console.error("Error al obtener datos del pasillo:", error.message);
+    //         return { numero: "Desconocido", nombre: "Desconocido" };
+    //     }
+    // };
 
     useEffect(() => {
         const fetchPasillos = async () => {
@@ -254,4 +254,4 @@ const ReservarBox = () => {
     );
 };
 
-export default ReservarBox;
+export { ReservarBox };

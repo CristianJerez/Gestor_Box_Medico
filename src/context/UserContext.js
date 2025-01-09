@@ -23,52 +23,59 @@ export const UserContext = createContext();
 
 // Crear el proveedor del contexto
 export const AppProvider = ({ children }) => {
-    const [state, setState] = useState({
-        user: null,
-        isAuthenticated: false,
-    });
+  const [state, setState] = useState({
+    user: null,
+    isAuthenticated: false,
+  });
 
-    const loginUser = async (email, password) => {
-        try {
-            const user = await DBContext.login(email, password);
-            if (user && Object.keys(user).length > 0) {
-                setState((prevState) => ({
-                    ...prevState,
-                    user,
-                    isAuthenticated: true,
-                }));
-            } else {
-                setState((prevState) => ({
-                    ...prevState,
-                    isAuthenticated: false,
-                }));
-                console.error("User is empty or invalid");
-            }
-        } catch (error) {
-            console.error(error);
-            setState((prevState) => ({
-                ...prevState,
-                isAuthenticated: false,
-            }));
-        }
-    };
-
-    const logout = () => {
+  const loginUser = async (email, password) => {
+    try {
+      const user = await DBContext.login(email, password);
+      if (user && Object.keys(user).length > 0) {
         setState((prevState) => ({
-            ...prevState,
-            user: null,
-            isAuthenticated: false,
+          ...prevState,
+          user,
+          isAuthenticated: true,
         }));
-    };
+        console.log(state.listaUsuarios);
+      } else {
+        setState((prevState) => ({
+          ...prevState,
+          isAuthenticated: false,
+        }));
+        console.error("User is empty or invalid");
+      }
+    } catch (error) {
+      console.error(error);
+      setState((prevState) => ({
+        ...prevState,
+        isAuthenticated: false,
+      }));
+    }
+  };
 
-    return (
-        <UserContext.Provider value={{ state, loginUser, logout }}>
-            {children}
-        </UserContext.Provider>
-    );
+  const logout = () => {
+    setState((prevState) => ({
+      ...prevState,
+      user: null,
+      isAuthenticated: false,
+    }));
+  };
+
+  return (
+    <UserContext.Provider
+      value={{
+        state,
+        loginUser,
+        logout,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 // Hook personalizado para usar el contexto
 export const useUserContext = () => {
-    return useContext(UserContext);
+  return useContext(UserContext);
 };
