@@ -1,58 +1,90 @@
 .pantalla {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column; /* Para apilar títulos y el formulario verticalmente */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
 }
 
-.acceso-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
+.pantalla h2 {
+  margin: 0; /* Elimina márgenes extra */
+  text-align: center;
+  font-size: 28px; /* Tamaño grande */
+  font-weight: bold;
+  color: #333333;
+  text-transform: uppercase; /* Convierte el texto a mayúsculas */
+  letter-spacing: 2px; /* Espaciado entre letras */
 }
 
-.acceso-container h1 {
-    margin-top: 0;
-    text-align: center;
+.pantalla h2:first-child {
+  color: #007bff; /* Color azul para "GesBox" */
+  margin-bottom: 10px; /* Espaciado entre títulos */
 }
 
-.acceso-container input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+.pantalla h2:last-child {
+  font-size: 18px; /* Tamaño menor para el subtítulo */
+  font-weight: normal;
+  color: #555555; /* Texto más claro */
+  margin-bottom: 20px; /* Separación del formulario */
 }
 
-.acceso-container button {
-    width: 100%;
-    padding: 10px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.login-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
-.acceso-container button:hover {
-    background-color: #555;
+.login-container h1 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 22px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #555;
 }
 
 @media (max-width: 768px) {
-    .acceso-container {
-        padding: 15px;
-    }
+  .login-container {
+    padding: 15px;
+  }
 
-    .acceso-container input,
-    .acceso-container button {
-        padding: 8px;
-    }
+  .login-container input,
+  .login-container button {
+    padding: 8px;
+  }
+
+  .pantalla h2 {
+    font-size: 24px; /* Ajusta el tamaño para pantallas pequeñas */
+  }
+
+  .pantalla h2:last-child {
+    font-size: 16px;
+  }
 }

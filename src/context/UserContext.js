@@ -1,23 +1,7 @@
-// // src/context/UserContext.js
-// import React, { createContext, useState } from 'react';
-
-// // Crear el contexto
-// export const UserContext = createContext();
-
-// // Proveedor del contexto
-// export const UserProvider = ({ children }) => {
-//     const [usuarioLogueado, setUsuarioLogueado] = useState(false); // Estado de autenticación
-//     const [usuarioRol, setUsuarioRol] = useState(null); // Estado para el rol del usuario
-
-//     return (
-//         <UserContext.Provider value={{ usuarioLogueado, setUsuarioLogueado, usuarioRol, setUsuarioRol }}>
-//             {children} {/* Renderiza los componentes hijos */}
-//         </UserContext.Provider>
-//     );
-// };
-
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { DBContext } from "../DBContext";
+import { useLocalStorage } from "../useLocalStorage";
+
 // Crear el contexto
 export const UserContext = createContext();
 
@@ -28,10 +12,23 @@ export const AppProvider = ({ children }) => {
     isAuthenticated: false,
   });
 
+  const [ls_user, saveItem] = useLocalStorage("user", {});
+  useEffect(() => {
+    if (ls_user && Object.keys(ls_user).length > 0) {
+      setState((prevState) => ({
+        ...prevState,
+        user: ls_user,
+        isAuthenticated: true,
+      }));
+    }
+  }, []);
+
   const loginUser = async (email, password) => {
     try {
       const user = await DBContext.login(email, password);
+      console.log("user context ", user);
       if (user && Object.keys(user).length > 0) {
+        saveItem(user);
         setState((prevState) => ({
           ...prevState,
           user,
@@ -60,6 +57,7 @@ export const AppProvider = ({ children }) => {
       user: null,
       isAuthenticated: false,
     }));
+    saveItem({});
   };
 
   return (

@@ -1,0 +1,158 @@
+/* Estilo general */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+/* Contenedor principal */
+.gestion-box {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos */
+h1,
+h2 {
+  color: #333;
+  text-align: center;
+}
+
+/* Formulario */
+.formulario {
+  margin-bottom: 20px;
+  display: grid;
+  gap: 15px;
+}
+
+.formulario input[type="text"],
+.formulario select,
+.formulario input[type="time"],
+.formulario input[type="checkbox"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Etiquetas */
+.formulario label {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Botones */
+.botones {
+  display: flex;
+  gap: 10px;
+}
+
+.botones button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.botones button:hover {
+  background-color: #0056b3;
+}
+
+.botones button:nth-child(2) {
+  background-color: #dc3545;
+}
+
+.botones button:nth-child(2):hover {
+  background-color: #b52a38;
+}
+
+/* Lista de boxes */
+.lista-boxes {
+  margin-top: 20px;
+}
+
+.box-item {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.box-item button {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.box-item button:first-child {
+  background-color: #ffc107;
+}
+
+.box-item button:first-child:hover {
+  background-color: #e0a800;
+}
+
+.box-item button:last-child {
+  background-color: #dc3545;
+}
+
+.box-item button:last-child:hover {
+  background-color: #b52a38;
+}
+
+/* Mensajes de error */
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .botones {
+    flex-direction: column;
+  }
+
+  .botones button {
+    width: 100%;
+  }
+
+  .box-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .box-item p {
+    margin-bottom: 10px;
+  }
+}

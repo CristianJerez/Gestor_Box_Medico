@@ -1,0 +1,167 @@
+/* Contenedor principal */
+.reservar-box {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos */
+.reservar-box h1,
+.reservar-box h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* Mensajes de validación */
+.reservar-box .error {
+  color: #dc3545;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.reservar-box .success {
+  color: #28a745;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Formulario */
+.reservar-box form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.reservar-box label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.reservar-box input[type="date"],
+.reservar-box input[type="time"],
+.reservar-box select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.reservar-box input:focus,
+.reservar-box select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Botón */
+.reservar-box button {
+  grid-column: 1 / -1;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reservar-box button:hover {
+  background-color: #0056b3;
+}
+
+/* Lista de reservas */
+.lista-reservas {
+  margin-top: 20px;
+}
+
+.lista-reservas .reserva-item {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-reservas .reserva-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Estilos para el listado de reservas */
+.reserva-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reserva-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.reserva-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.reserva-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reserva-actions button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.reserva-actions button:first-child:hover {
+  background-color: #0056b3;
+}
+
+.reserva-actions button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+.reserva-actions button:last-child:hover {
+  background-color: #c82333;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .reservar-box form {
+    grid-template-columns: 1fr;
+  }
+
+  .reservar-box button {
+    width: 100%;
+  }
+
+  .lista-reservas .reserva-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
