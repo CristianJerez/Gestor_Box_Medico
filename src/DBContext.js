@@ -12,6 +12,8 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { auth, db } from "./FirebaseConfig";
 
@@ -239,6 +241,65 @@ const DBContext = {
       throw error;
     }
   },
+  async getReservas() {
+    console.log("entro");
+    const CollectionRef = collection(db, "reservas");
+    const data = await getDocs(CollectionRef);
+    const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    console.log(response);
+    return response;
+  },
+
+  async getMisReservas(userid) {
+    try {
+      const CollectionRef = collection(db, "reservas");
+      const q = query(CollectionRef, where("usuarioId", "==", userid));
+      const data = await getDocs(q);
+      const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      return response;
+    } catch (error) {
+      console.error("Error fetching reservations: ", error);
+      throw error;
+    }
+  },
+
+  async getReservasActuales(boxId, fecha) {
+    try {
+      const CollectionRef = collection(db, "reservas");
+      const q = query(
+        CollectionRef,
+        where("boxId", "==", boxId),
+        where("fecha", "==", fecha)
+      );
+      const data = await getDocs(q);
+      const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      return response;
+    } catch (error) {
+      console.error("Error fetching reservations: ", error);
+      throw error;
+    }
+  },
+
+  async addReserva(nuevaReserva) {
+    const CollectionRef = collection(db, "reservas");
+    await addDoc(CollectionRef, nuevaReserva);
+    console.log("Reserva creada con éxito.");
+    return true;
+  },
+
+  async editReserva(editando, nuevo) {
+    await updateDoc(doc(db, "reservas", editando), nuevo);
+    console.log("Usuario actualizado con éxito.");
+  },
+
+  async deleteReserva(id) {
+    try {
+      await deleteDoc(doc(db, "reservas", id));
+    } catch (error) {
+      console.error("Error al eliminar el usuario:", error);
+    }
+  },
+
 };
 
 export { DBContext };

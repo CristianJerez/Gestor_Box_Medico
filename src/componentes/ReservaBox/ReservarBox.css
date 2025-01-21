@@ -1,5 +1,4 @@
-/* Contenedor principal */
-.reservar-box {
+Contenedor principal .reservar-box {
   max-width: 1200px;
   margin: 20px auto;
   padding: 20px;
@@ -133,12 +132,12 @@
 }
 
 .reserva-actions button:first-child {
-  background-color: #007bff;
+  background-color: #28a745;
   color: white;
 }
 
 .reserva-actions button:first-child:hover {
-  background-color: #0056b3;
+  background-color: #218838;
 }
 
 .reserva-actions button:last-child {
