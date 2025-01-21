@@ -3,16 +3,6 @@ import { DBContext } from "../../DBContext";
 import "./GestionBox.css";
 
 const GestionBox = () => {
-  // const {
-  //   listaBoxes,
-  //   listaPasillos,
-  //   getBoxes,
-  //   getPasillos,
-  //   addBox,
-  //   updateBox,
-  //   deleteBox,
-  // } = useGlobal();
-
   const [listaBoxes, setListaBoxes] = useState([]);
   const [listaPasillos, setListaPasillos] = useState([]);
   const [nuevoBox, setNuevoBox] = useState({
@@ -25,27 +15,25 @@ const GestionBox = () => {
   const [editando, setEditando] = useState(null);
   const [errores, setErrores] = useState({});
 
+  // Fetch data from Firestore
   const fetchBoxes = async () => {
     try {
       const response = await DBContext.getBoxes();
-      if (response) {
-        setListaBoxes(response);
-      }
+      setListaBoxes(response);
     } catch (error) {
-      console.error(error);
+      console.error("Error al obtener boxes:", error.message);
     }
   };
 
   const fetchPasillos = async () => {
     try {
       const response = await DBContext.getPasillos();
-      if (response) {
-        setListaPasillos(response);
-      }
+      setListaPasillos(response);
     } catch (error) {
-      console.error(error);
+      console.error("Error al obtener pasillos:", error.message);
     }
   };
+
   useEffect(() => {
     fetchBoxes();
     fetchPasillos();
@@ -54,7 +42,6 @@ const GestionBox = () => {
   // Validaciones
   const validarFormulario = () => {
     const nuevosErrores = {};
-
     if (!/^[0-9]+$/.test(nuevoBox.numero)) {
       nuevosErrores.numero = "El número del box debe ser un valor numérico.";
     }
@@ -76,25 +63,30 @@ const GestionBox = () => {
   const guardarBox = async () => {
     if (!validarFormulario()) return;
 
-    if (editando) {
-      try {
-        await DBContext.editBox(editando, nuevoBox);
-        fetchBoxes();
-      } catch (error) {
-        console.error(error);
-      }
-      setEditando(null);
-    } else {
-      try {
-        const response = await DBContext.addBox(nuevoBox);
-        if (response) {
-          fetchBoxes();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    const boxData = {
+      numero: parseInt(nuevoBox.numero, 10),
+      pasilloId: nuevoBox.pasilloId,
+      disponibilidad: nuevoBox.disponibilidad,
+      horaInicio: nuevoBox.horaInicio,
+      horaFin: nuevoBox.horaFin,
+    };
 
+    try {
+      if (editando) {
+        await DBContext.editBox(editando, boxData);
+        console.log(`Box con ID ${editando} actualizado.`);
+      } else {
+        await DBContext.addBox(boxData);
+        console.log("Nuevo box creado.");
+      }
+      fetchBoxes();
+      resetFormulario();
+    } catch (error) {
+      console.error("Error al guardar el box:", error.message);
+    }
+  };
+
+  const resetFormulario = () => {
     setNuevoBox({
       numero: "",
       pasilloId: "",
@@ -102,12 +94,14 @@ const GestionBox = () => {
       horaInicio: "",
       horaFin: "",
     });
+    setEditando(null);
+    setErrores({});
   };
 
   // Iniciar edición de box
   const editarBox = (box) => {
     setNuevoBox({
-      numero: box.numero,
+      numero: box.numero.toString(),
       pasilloId: box.pasilloId,
       disponibilidad: box.disponibilidad,
       horaInicio: box.horaInicio,
@@ -116,12 +110,14 @@ const GestionBox = () => {
     setEditando(box.id);
   };
 
-  const deleteBox = async (id) => {
+  // Eliminar box
+  const eliminarBox = async (id) => {
     try {
       await DBContext.deleteBox(id);
+      console.log(`Box con ID ${id} eliminado.`);
       fetchBoxes();
     } catch (error) {
-      console.error(error);
+      console.error("Error al eliminar el box:", error.message);
     }
   };
 
@@ -171,7 +167,7 @@ const GestionBox = () => {
             setNuevoBox({ ...nuevoBox, horaFin: e.target.value })
           }
         />
-        <label>box operativo</label>
+        <label>Box operativo</label>
         <input
           type="checkbox"
           checked={nuevoBox.disponibilidad}
@@ -185,22 +181,7 @@ const GestionBox = () => {
           <button onClick={guardarBox}>
             {editando ? "Actualizar Box" : "Guardar Box"}
           </button>
-          {editando && (
-            <button
-              onClick={() => {
-                setNuevoBox({
-                  numero: "",
-                  pasilloId: "",
-                  disponibilidad: false,
-                  horaInicio: "",
-                  horaFin: "",
-                });
-                setEditando(null);
-              }}
-            >
-              Cancelar
-            </button>
-          )}
+          {editando && <button onClick={resetFormulario}>Cancelar</button>}
         </div>
       </div>
 
@@ -212,12 +193,12 @@ const GestionBox = () => {
               {`Número: ${box.numero}, Pasillo: ${
                 listaPasillos.find((p) => p.id === box.pasilloId)
                   ?.numero_pasillo || "Desconocido"
-              }, Horario: ${box.horaInicio} - ${box.horaFin} , ${
+              }, Horario: ${box.horaInicio} - ${box.horaFin}, ${
                 box.disponibilidad ? "Operativo" : "No operativo"
               }`}
             </p>
             <button onClick={() => editarBox(box)}>Editar</button>
-            <button onClick={() => deleteBox(box.id)}>Eliminar</button>
+            <button onClick={() => eliminarBox(box.id)}>Eliminar</button>
           </div>
         ))}
       </div>

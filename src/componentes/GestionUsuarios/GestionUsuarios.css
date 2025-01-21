@@ -143,3 +143,39 @@
     align-self: center;
   }
 }
+
+/* Botón de Guardar (verde) */
+.btn-guardar {
+  background-color: #28a745;
+}
+
+.btn-guardar:hover {
+  background-color: #218838;
+}
+
+/* Botón de Editar (amarillo) */
+.btn-editar {
+  background-color: #ffc107;
+}
+
+.btn-editar:hover {
+  background-color: #e0a800;
+}
+
+/* Botón de Eliminar (rojo) */
+.btn-eliminar {
+  background-color: #dc3545;
+}
+
+.btn-eliminar:hover {
+  background-color: #b52a38;
+}
+
+/* Botón de Cancelar (gris claro, opcional) */
+.btn-cancelar {
+  background-color: #6c757d;
+}
+
+.btn-cancelar:hover {
+  background-color: #5a6268;
+}

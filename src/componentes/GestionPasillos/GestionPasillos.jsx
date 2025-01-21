@@ -13,17 +13,16 @@ const GestionPasillo = () => {
   const [editando, setEditando] = useState(null);
   const [errores, setErrores] = useState({});
 
+  // Fetch inicial de los pasillos
   const fetchData = async () => {
     try {
       const response = await DBContext.getPasillos();
-      if (response) {
-        setListaPasillos(response);
-      }
+      setListaPasillos(response);
     } catch (error) {
-      console.error(error);
+      console.error("Error al obtener los pasillos:", error.message);
     }
   };
-  // Cargar los pasillos al inicio
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -33,67 +32,70 @@ const GestionPasillo = () => {
     const nuevosErrores = {};
 
     if (!/^[0-9]+$/.test(nuevoPasillo.numero_pasillo)) {
-      nuevosErrores.numero_pasillo =
-        "El número de pasillo debe contener solo números.";
+      nuevosErrores.numero_pasillo = "El número de pasillo debe ser numérico.";
     }
 
     if (!nuevoPasillo.especialidad || nuevoPasillo.especialidad.length <= 5) {
-      nuevosErrores.especialidad =
-        "La especialidad debe tener más de 5 caracteres y ser texto.";
+      nuevosErrores.especialidad = "La especialidad debe tener más de 5 caracteres.";
     }
 
     if (!nuevoPasillo.jefe_pasillo || nuevoPasillo.jefe_pasillo.length <= 6) {
-      nuevosErrores.jefe_pasillo =
-        "El nombre del jefe de pasillo debe tener más de 6 caracteres.";
+      nuevosErrores.jefe_pasillo = "El jefe de pasillo debe tener más de 6 caracteres.";
     }
 
     if (!/^[0-9]{6,}$/.test(nuevoPasillo.anexo_telefono)) {
-      nuevosErrores.anexo_telefono =
-        "El anexo telefónico debe tener al menos 6 números.";
+      nuevosErrores.anexo_telefono = "El anexo debe tener al menos 6 dígitos.";
     }
 
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  // Crear o actualizar un pasillo
+  // Guardar o actualizar un pasillo
   const guardarPasillo = async () => {
     if (!validarFormulario()) return;
 
     try {
       if (editando) {
-        try {
-          await DBContext.editPasillo(editando, nuevoPasillo);
-          fetchData();
-        } catch (error) {
-          console.error(error);
-        }
-        setEditando(null);
+        await DBContext.editPasillo(editando, {
+          numero_pasillo: parseInt(nuevoPasillo.numero_pasillo, 10),
+          especialidad: nuevoPasillo.especialidad,
+          jefe_pasillo: nuevoPasillo.jefe_pasillo,
+          anexo_telefono: nuevoPasillo.anexo_telefono,
+        });
+        console.log(`Pasillo con ID ${editando} actualizado.`);
       } else {
-        try {
-          const response = await DBContext.addPasillo(nuevoPasillo);
-          if (response) {
-            fetchData();
-          }
-        } catch (error) {
-          console.error(error);
-        }
+        await DBContext.addPasillo({
+          numero_pasillo: parseInt(nuevoPasillo.numero_pasillo, 10),
+          especialidad: nuevoPasillo.especialidad,
+          jefe_pasillo: nuevoPasillo.jefe_pasillo,
+          anexo_telefono: nuevoPasillo.anexo_telefono,
+        });
+        console.log("Nuevo pasillo creado.");
       }
-      setNuevoPasillo({
-        numero_pasillo: "",
-        especialidad: "",
-        jefe_pasillo: "",
-        anexo_telefono: "",
-      });
+      fetchData();
+      resetFormulario();
     } catch (error) {
-      console.error("Error al guardar el pasillo:", error);
+      console.error("Error al guardar el pasillo:", error.message);
     }
+  };
+
+  // Resetear formulario
+  const resetFormulario = () => {
+    setNuevoPasillo({
+      numero_pasillo: "",
+      especialidad: "",
+      jefe_pasillo: "",
+      anexo_telefono: "",
+    });
+    setEditando(null);
+    setErrores({});
   };
 
   // Iniciar edición
   const editarPasillo = (pasillo) => {
     setNuevoPasillo({
-      numero_pasillo: pasillo.numero_pasillo,
+      numero_pasillo: pasillo.numero_pasillo.toString(),
       especialidad: pasillo.especialidad,
       jefe_pasillo: pasillo.jefe_pasillo,
       anexo_telefono: pasillo.anexo_telefono,
@@ -101,12 +103,14 @@ const GestionPasillo = () => {
     setEditando(pasillo.id);
   };
 
-  const deletePasillo = async (id) => {
+  // Eliminar pasillo
+  const eliminarPasillo = async (id) => {
     try {
       await DBContext.deletePasillo(id);
+      console.log(`Pasillo con ID ${id} eliminado.`);
       fetchData();
     } catch (error) {
-      console.error(error);
+      console.error("Error al eliminar el pasillo:", error.message);
     }
   };
 
@@ -118,64 +122,39 @@ const GestionPasillo = () => {
           type="text"
           placeholder="Número de Pasillo"
           value={nuevoPasillo.numero_pasillo}
-          onChange={(e) =>
-            setNuevoPasillo({ ...nuevoPasillo, numero_pasillo: e.target.value })
-          }
+          onChange={(e) => setNuevoPasillo({ ...nuevoPasillo, numero_pasillo: e.target.value })}
         />
-        {errores.numero_pasillo && (
-          <span className="error">{errores.numero_pasillo}</span>
-        )}
+        {errores.numero_pasillo && <span className="error">{errores.numero_pasillo}</span>}
 
         <input
           type="text"
           placeholder="Especialidad"
           value={nuevoPasillo.especialidad}
-          onChange={(e) =>
-            setNuevoPasillo({ ...nuevoPasillo, especialidad: e.target.value })
-          }
+          onChange={(e) => setNuevoPasillo({ ...nuevoPasillo, especialidad: e.target.value })}
         />
-        {errores.especialidad && (
-          <span className="error">{errores.especialidad}</span>
-        )}
+        {errores.especialidad && <span className="error">{errores.especialidad}</span>}
 
         <input
           type="text"
           placeholder="Jefe de Pasillo"
           value={nuevoPasillo.jefe_pasillo}
-          onChange={(e) =>
-            setNuevoPasillo({ ...nuevoPasillo, jefe_pasillo: e.target.value })
-          }
+          onChange={(e) => setNuevoPasillo({ ...nuevoPasillo, jefe_pasillo: e.target.value })}
         />
-        {errores.jefe_pasillo && (
-          <span className="error">{errores.jefe_pasillo}</span>
-        )}
+        {errores.jefe_pasillo && <span className="error">{errores.jefe_pasillo}</span>}
 
         <input
           type="text"
           placeholder="Anexo Telefónico"
           value={nuevoPasillo.anexo_telefono}
-          onChange={(e) =>
-            setNuevoPasillo({ ...nuevoPasillo, anexo_telefono: e.target.value })
-          }
+          onChange={(e) => setNuevoPasillo({ ...nuevoPasillo, anexo_telefono: e.target.value })}
         />
-        {errores.anexo_telefono && (
-          <span className="error">{errores.anexo_telefono}</span>
-        )}
+        {errores.anexo_telefono && <span className="error">{errores.anexo_telefono}</span>}
 
         <div className="botones">
-          <button onClick={guardarPasillo}>
-            {editando ? "Actualizar" : "Guardar"}
+          <button className="btn-guardar" onClick={guardarPasillo}>
+            {editando ? "Actualizar Pasillo" : "Guardar Pasillo"}
           </button>
-          <button
-            onClick={() =>
-              setNuevoPasillo({
-                numero_pasillo: "",
-                especialidad: "",
-                jefe_pasillo: "",
-                anexo_telefono: "",
-              })
-            }
-          >
+          <button className="btn-cancelar" onClick={resetFormulario}>
             Cancelar
           </button>
         </div>
@@ -186,12 +165,13 @@ const GestionPasillo = () => {
         {listaPasillos.map((pasillo) => (
           <div key={pasillo.id} className="pasillo">
             <p>
-              {pasillo.numero_pasillo} - {pasillo.especialidad} -{" "}
-              {pasillo.jefe_pasillo} - {pasillo.anexo_telefono}
+              {`Número: ${pasillo.numero_pasillo}, Especialidad: ${pasillo.especialidad}, Jefe: ${pasillo.jefe_pasillo}, Anexo: ${pasillo.anexo_telefono}`}
             </p>
             <div className="acciones">
-              <button onClick={() => editarPasillo(pasillo)}>Editar</button>
-              <button onClick={() => deletePasillo(pasillo.id)}>
+              <button className="btn-editar" onClick={() => editarPasillo(pasillo)}>
+                Editar
+              </button>
+              <button className="btn-eliminar" onClick={() => eliminarPasillo(pasillo.id)}>
                 Eliminar
               </button>
             </div>

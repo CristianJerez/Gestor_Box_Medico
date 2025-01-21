@@ -8,6 +8,7 @@ import { MenuSolicitante } from "./MenuSolicitante";
 import { ReservarBox } from "../ReservaBox/ReservarBox";
 import "./Menu.css";
 import { OcupacionBoxes } from "../OcupacionBoxes";
+import { ManualUso } from "../ManualUso";
 
 function Menu() {
   const { state, logout } = useContext(UserContext);
@@ -55,6 +56,7 @@ function Menu() {
         {renderizar === "gestionBox" && <GestionBox />}
         {renderizar === "reservarBox" && <ReservarBox />}
         {renderizar === "ocupacionBoxes" && <OcupacionBoxes />}
+        {renderizar === "manualUso" && <ManualUso />}
       </main>
     </div>
   );
