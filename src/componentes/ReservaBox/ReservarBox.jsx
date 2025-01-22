@@ -263,12 +263,235 @@
 // };
 
 // export { ReservarBox };
+//--------------
 
-import React, { useContext, useEffect, useState } from "react";
+// import React, { useContext, useEffect, useState } from "react";
+// import "./ReservarBox.css";
+// import { DBContext } from "../../DBContext";
+// import { UserContext } from "../../context/UserContext";
+// import Select from "react-select";
+
+// const ReservarBox = () => {
+//   const { state } = useContext(UserContext);
+//   const [listaPasillos, setListaPasillos] = useState([]);
+//   const [listaBoxes, setListaBoxes] = useState([]);
+//   const [listaReservas, setListaReservas] = useState([]);
+//   const [pasilloSeleccionado, setPasilloSeleccionado] = useState("");
+//   const [boxSeleccionado, setBoxSeleccionado] = useState("");
+//   const [fecha, setFecha] = useState("");
+//   const [horaInicio, setHoraInicio] = useState("");
+//   const [horaFin, setHoraFin] = useState("");
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+//   const [editandoReserva, setEditandoReserva] = useState(null);
+
+//   // Cargar lista de pasillos
+//   const fetchPasillos = async () => {
+//     try {
+//       const response = await DBContext.getPasillos();
+//       setListaPasillos(response || []);
+//     } catch (err) {
+//       setError("Error al cargar pasillos: " + err.message);
+//     }
+//   };
+
+//   // Cargar lista de boxes
+//   const fetchBoxes = async () => {
+//     try {
+//       const response = await DBContext.getBoxes();
+//       setListaBoxes(response || []);
+//     } catch (err) {
+//       setError("Error al cargar boxes: " + err.message);
+//     }
+//   };
+
+//   // Cargar reservas del usuario
+//   const fetchMisReservas = async () => {
+//     try {
+//       const response = await DBContext.getMisReservas(state.user.id);
+//       const reservasConDetalle = await Promise.all(
+//         response.map(async (reserva) => {
+//           const box = listaBoxes.find((box) => box.id === reserva.boxId);
+//           const pasillo = listaPasillos.find(
+//             (pasillo) => pasillo.id === box.pasilloId
+//           );
+//           return {
+//             ...reserva,
+//             boxNumero: box ? box.numero : "Desconocido",
+//             pasilloNumero: pasillo ? pasillo.numero_pasillo : "Desconocido",
+//           };
+//         })
+//       );
+//       setListaReservas(reservasConDetalle);
+//     } catch (err) {
+//       setError("Error al cargar reservas: " + err.message);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchPasillos();
+//     fetchBoxes();
+//     fetchMisReservas();
+//   }, []);
+
+//   // Manejar selección de pasillo
+//   const handlePasilloChange = (pasilloId) => {
+//     setPasilloSeleccionado(pasilloId);
+//     const filteredBoxes = listaBoxes.filter(
+//       (box) => box.pasilloId === pasilloId
+//     );
+//     setBoxSeleccionado("");
+//     setListaBoxes(filteredBoxes);
+//   };
+
+//   // Reservar o actualizar box
+//   const handleReservarBox = async () => {
+//     try {
+//       if (!boxSeleccionado || !fecha || !horaInicio || !horaFin) {
+//         setError("Todos los campos son obligatorios.");
+//         return;
+//       }
+
+//       const reservaData = {
+//         boxId: boxSeleccionado,
+//         usuarioId: state.user.id,
+//         fecha,
+//         horaInicio,
+//         horaFin,
+//         estado: true,
+//       };
+
+//       await DBContext.addReserva(reservaData);
+//       setSuccess("Box reservado con éxito.");
+//       fetchMisReservas();
+//     } catch (err) {
+//       setError("Error al reservar el box: " + err.message);
+//     }
+//   };
+//   const handleEliminar = async (id) => {
+//     try {
+//       await DBContext.deleteReserva(id);
+//       setListaReservas((prevReservas) =>
+//         prevReservas.filter((r) => r.id !== id)
+//       );
+//       setSuccess("Reserva eliminada con éxito.");
+//     } catch (error) {
+//       setError("Error al eliminar la reserva: " + error.message);
+//     }
+//   };
+
+//   const today = new Date().toISOString().split("T")[0];
+
+//   return (
+//     <div className="reservar-box">
+//       <h1>Reservar Box</h1>
+//       {error && <p style={{ color: "red" }}>{error}</p>}
+//       {success && <p style={{ color: "green" }}>{success}</p>}
+
+//       <div>
+//         <label>Pasillo:</label>
+//         <select
+//           value={pasilloSeleccionado}
+//           onChange={(e) => handlePasilloChange(e.target.value)}
+//         >
+//           <option value="">Seleccione un pasillo</option>
+//           {listaPasillos.map((pasillo) => (
+//             <option key={pasillo.id} value={pasillo.id}>
+//               Pasillo {pasillo.numero_pasillo}
+//             </option>
+//           ))}
+//         </select>
+//       </div>
+
+//       <div>
+//         <label>Box:</label>
+//         <select
+//           value={boxSeleccionado}
+//           onChange={(e) => setBoxSeleccionado(e.target.value)}
+//           disabled={!pasilloSeleccionado}
+//         >
+//           <option value="">Seleccione un box</option>
+//           {listaBoxes.map((box) => (
+//             <option key={box.id} value={box.id}>
+//               {`Box ${box.numero}`}
+//             </option>
+//           ))}
+//         </select>
+//       </div>
+
+//       <div>
+//         <label>Fecha:</label>
+//         <input
+//           type="date"
+//           value={fecha}
+//           onChange={(e) => setFecha(e.target.value)}
+//           min={today}
+//         />
+//       </div>
+
+//       <div>
+//         <label>Hora de inicio:</label>
+//         <input
+//           type="time"
+//           value={horaInicio}
+//           onChange={(e) => setHoraInicio(e.target.value)}
+//         />
+//       </div>
+
+//       <div>
+//         <label>Hora de fin:</label>
+//         <input
+//           type="time"
+//           value={horaFin}
+//           onChange={(e) => setHoraFin(e.target.value)}
+//         />
+//       </div>
+
+//       <button onClick={handleReservarBox}>Reservar Box</button>
+
+//       <h2>Mis Reservas</h2>
+//       {listaReservas.map((reserva) => (
+//         <div key={reserva.id} className="reserva-item">
+//           <p>
+//             {`Pasillo: ${reserva.pasilloNumero}, Box: ${reserva.boxNumero}, Fecha: ${reserva.fecha}, Horario: ${reserva.horaInicio} - ${reserva.horaFin}`}
+//           </p>
+//           <div className="reserva-actions">
+//             {/* Botón de editar */}
+//             <button
+//               onClick={() => {
+//                 setEditandoReserva(reserva);
+//                 setPasilloSeleccionado(reserva.pasilloId);
+//                 setBoxSeleccionado(reserva.boxId);
+//                 setFecha(reserva.fecha);
+//                 setHoraInicio(reserva.horaInicio);
+//                 setHoraFin(reserva.horaFin);
+//               }}
+//               style={{ marginRight: "10px" }}
+//             >
+//               Editar
+//             </button>
+
+//             {/* Botón de eliminar */}
+//             <button
+//               onClick={() => handleEliminar(reserva.id)}
+//               style={{ color: "white", backgroundColor: "red" }}
+//             >
+//               Eliminar
+//             </button>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export { ReservarBox };
+//--------------
+
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import "./ReservarBox.css";
 import { DBContext } from "../../DBContext";
 import { UserContext } from "../../context/UserContext";
-import Select from "react-select";
 
 const ReservarBox = () => {
   const { state } = useContext(UserContext);
@@ -283,7 +506,6 @@ const ReservarBox = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [editandoReserva, setEditandoReserva] = useState(null);
-
 
   // Cargar lista de pasillos
   const fetchPasillos = async () => {
@@ -306,19 +528,19 @@ const ReservarBox = () => {
   };
 
   // Cargar reservas del usuario
-  const fetchMisReservas = async () => {
+  const fetchMisReservas = useCallback(async () => {
     try {
       const response = await DBContext.getMisReservas(state.user.id);
       const reservasConDetalle = await Promise.all(
         response.map(async (reserva) => {
-          const box = listaBoxes.find((box) => box.id === reserva.boxId);
+          const box = listaBoxes.find((box) => box.id === reserva.boxId) || {};
           const pasillo = listaPasillos.find(
             (pasillo) => pasillo.id === box.pasilloId
-          );
+          ) || {};
           return {
             ...reserva,
-            boxNumero: box ? box.numero : "Desconocido",
-            pasilloNumero: pasillo ? pasillo.numero_pasillo : "Desconocido",
+            boxNumero: box.numero || "Desconocido",
+            pasilloNumero: pasillo.numero_pasillo || "Desconocido",
           };
         })
       );
@@ -326,13 +548,18 @@ const ReservarBox = () => {
     } catch (err) {
       setError("Error al cargar reservas: " + err.message);
     }
-  };
+  }, [state.user.id, listaBoxes, listaPasillos]);
 
   useEffect(() => {
     fetchPasillos();
     fetchBoxes();
-    fetchMisReservas();
   }, []);
+
+  useEffect(() => {
+    if (listaBoxes.length > 0 && listaPasillos.length > 0) {
+      fetchMisReservas();
+    }
+  }, [listaBoxes, listaPasillos, fetchMisReservas]);
 
   // Manejar selección de pasillo
   const handlePasilloChange = (pasilloId) => {
@@ -341,7 +568,7 @@ const ReservarBox = () => {
       (box) => box.pasilloId === pasilloId
     );
     setBoxSeleccionado("");
-    setListaBoxes(filteredBoxes);
+    setListaBoxes(filteredBoxes.length > 0 ? filteredBoxes : listaBoxes);
   };
 
   // Reservar o actualizar box
@@ -368,16 +595,18 @@ const ReservarBox = () => {
       setError("Error al reservar el box: " + err.message);
     }
   };
+
   const handleEliminar = async (id) => {
     try {
       await DBContext.deleteReserva(id);
-      setListaReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
+      setListaReservas((prevReservas) =>
+        prevReservas.filter((r) => r.id !== id)
+      );
       setSuccess("Reserva eliminada con éxito.");
     } catch (error) {
       setError("Error al eliminar la reserva: " + error.message);
     }
   };
-  
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -449,40 +678,39 @@ const ReservarBox = () => {
       <button onClick={handleReservarBox}>Reservar Box</button>
 
       <h2>Mis Reservas</h2>
-{listaReservas.map((reserva) => (
-  <div key={reserva.id} className="reserva-item">
-    <p>
-      {`Pasillo: ${reserva.pasilloNumero}, Box: ${reserva.boxNumero}, Fecha: ${reserva.fecha}, Horario: ${reserva.horaInicio} - ${reserva.horaFin}`}
-    </p>
-    <div className="reserva-actions">
-      {/* Botón de editar */}
-      <button
-        onClick={() => {
-          setEditandoReserva(reserva);
-          setPasilloSeleccionado(reserva.pasilloId);
-          setBoxSeleccionado(reserva.boxId);
-          setFecha(reserva.fecha);
-          setHoraInicio(reserva.horaInicio);
-          setHoraFin(reserva.horaFin);
-        }}
-        style={{ marginRight: "10px" }}
-      >
-        Editar
-      </button>
+      {listaReservas.map((reserva) => (
+        <div key={reserva.id} className="reserva-item">
+          <p>
+            {`Pasillo: ${reserva.pasilloNumero}, Box: ${reserva.boxNumero}, Fecha: ${reserva.fecha}, Horario: ${reserva.horaInicio} - ${reserva.horaFin}`}
+          </p>
+          <div className="reserva-actions">
+            <button
+              onClick={() => {
+                setEditandoReserva(reserva);
+                setPasilloSeleccionado(reserva.pasilloId);
+                setBoxSeleccionado(reserva.boxId);
+                setFecha(reserva.fecha);
+                setHoraInicio(reserva.horaInicio);
+                setHoraFin(reserva.horaFin);
+              }}
+              style={{ marginRight: "10px" }}
+            >
+              Editar
+            </button>
 
-      {/* Botón de eliminar */}
-      <button
-        onClick={() => handleEliminar(reserva.id)}
-        style={{ color: "white", backgroundColor: "red" }}
-      >
-        Eliminar
-      </button>
-    </div>
-  </div>
-))}
-
+            <button
+              onClick={() => handleEliminar(reserva.id)}
+              style={{ color: "white", backgroundColor: "red" }}
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
 export { ReservarBox };
+
+
