@@ -10,50 +10,46 @@ const OcupacionBoxes = () => {
   const [error, setError] = useState("");
   const [fechaSeleccionada, setFechaSeleccionada] = useState(
     new Date().toISOString().split("T")[0]
-  ); // Fecha seleccionada por el usuario
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener datos de pasillos
         const pasillosSnapshot = await DBContext.getPasillos();
         setPasillos(pasillosSnapshot);
 
-        // Obtener datos de boxes
         const boxesSnapshot = await DBContext.getBoxes();
         setBoxes(boxesSnapshot);
 
-        // Obtener datos de reservas
         const reservasSnapshot = await DBContext.getReservas();
         setReservas(reservasSnapshot);
-
-        // Calcular ocupación inicial para la fecha seleccionada
-        const pasilloOcupacion = calcularOcupacionPasillos(
-          boxesSnapshot,
-          reservasSnapshot,
-          fechaSeleccionada
-        );
-        setOcupacionPasillos(pasilloOcupacion);
       } catch (error) {
         setError("Error al cargar los datos: " + error.message);
       }
     };
 
     fetchData();
-  }, [fechaSeleccionada]); // Recalcula cuando cambia la fecha seleccionada
+  }, []); // Solo se ejecuta una vez al montar el componente
 
-  // Calcular minutos entre dos horarios
+  useEffect(() => {
+    if (boxes.length > 0 && reservas.length > 0 && pasillos.length > 0) {
+      const pasilloOcupacion = calcularOcupacionPasillos(
+        boxes,
+        reservas,
+        fechaSeleccionada
+      );
+      setOcupacionPasillos(pasilloOcupacion);
+    }
+  }, [boxes, reservas, pasillos, fechaSeleccionada]); // Actualiza al cambiar datos o fecha
+
   const calcularDiferenciaMinutos = (horaInicio, horaFin) => {
     const [hInicio, mInicio] = horaInicio.split(":").map(Number);
     const [hFin, mFin] = horaFin.split(":").map(Number);
-
     const inicio = hInicio * 60 + mInicio;
     const fin = hFin * 60 + mFin;
-
-    return fin > inicio ? fin - inicio : 24 * 60 - inicio + fin; // Maneja cruces de medianoche
+    return fin > inicio ? fin - inicio : 24 * 60 - inicio + fin;
   };
 
-  // Calcular porcentaje de ocupación diaria por box
   const calcularPorcentajeOcupacionBox = (box, fecha) => {
     const reservasBox = reservas.filter(
       (reserva) => reserva.boxId === box.id && reserva.fecha === fecha
@@ -72,73 +68,37 @@ const OcupacionBoxes = () => {
     return Math.round((tiempoOcupado / tiempoTotal) * 100);
   };
 
-//   // Calcular promedio de ocupación diaria por pasillo
-//   const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
-//     const pasilloData = {};
-
-//     // Iterar sobre los boxes
-//     boxes.forEach((box) => {
-//       // Calcular la ocupación de cada box para la fecha dada
-//       const porcentajeOcupacionBox = calcularPorcentajeOcupacionBox(box, fecha);
-
-//       // Si el pasillo del box no está en pasilloData, inicializarlo
-//       if (!pasilloData[box.pasilloId]) {
-//         pasilloData[box.pasilloId] = {
-//           totalBoxes: 0,
-//           porcentajeTotal: 0,
-//         };
-//       }
-
-//       // Incrementar el total de boxes y sumar la ocupación del box al porcentaje total
-//       pasilloData[box.pasilloId].totalBoxes += 1;
-//       pasilloData[box.pasilloId].porcentajeTotal += porcentajeOcupacionBox;
-//     });
-
-//     // Calcular el promedio de ocupación para cada pasillo
-//     return Object.entries(pasilloData).map(([pasilloId, datos]) => {
-//       const promedioOcupacion =
-//         datos.totalBoxes > 0
-//           ? Math.round(datos.porcentajeTotal / datos.totalBoxes)
-//           : 0;
-
-//       return {
-//         pasilloId,
-//         porcentajeOcupacion: promedioOcupacion,
-//       };
-//     });
-//   };
-
-const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
+  const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
     const pasilloData = {};
-  
+
     boxes.forEach((box) => {
       const porcentajeOcupacionBox = calcularPorcentajeOcupacionBox(box, fecha);
-  
+
       if (!pasilloData[box.pasilloId]) {
         pasilloData[box.pasilloId] = { totalBoxes: 0, porcentajeTotal: 0 };
       }
-  
+
       pasilloData[box.pasilloId].totalBoxes += 1;
       pasilloData[box.pasilloId].porcentajeTotal += porcentajeOcupacionBox;
     });
-  
+
     return Object.entries(pasilloData).map(([pasilloId, datos]) => {
       const promedioOcupacion =
-        datos.totalBoxes > 0 ? Math.round(datos.porcentajeTotal / datos.totalBoxes) : 0;
-  
-      console.log(`Pasillo ${pasilloId}:`, {
-        totalBoxes: datos.totalBoxes,
-        porcentajeTotal: datos.porcentajeTotal,
-        promedioOcupacion,
-      });
-  
-      return {
-        pasilloId,
-        porcentajeOcupacion: promedioOcupacion,
-      };
+        datos.totalBoxes > 0
+          ? Math.round(datos.porcentajeTotal / datos.totalBoxes)
+          : 0;
+
+      return { pasilloId, porcentajeOcupacion: promedioOcupacion };
     });
   };
-  
+
+  const manejarCambioFecha = (nuevaFecha) => {
+    // Forzar actualización
+    setFechaSeleccionada("");
+    setTimeout(() => {
+      setFechaSeleccionada(nuevaFecha);
+    }, 0);
+  };
 
   const obtenerNombrePasillo = (pasilloId) => {
     const pasillo = pasillos.find((p) => p.id === pasilloId);
@@ -155,6 +115,7 @@ const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
     document.body.innerHTML = originalContent;
     window.location.reload();
   };
+
   return (
     <div className="container-ocupacion">
       <button onClick={printHandled}>Imprimir</button>
@@ -169,7 +130,7 @@ const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
             id="fecha"
             type="date"
             value={fechaSeleccionada}
-            onChange={(e) => setFechaSeleccionada(e.target.value)}
+            onChange={(e) => manejarCambioFecha(e.target.value)}
           />
         </div>
 
@@ -196,8 +157,7 @@ const calcularOcupacionPasillos = (boxes, reservas, fecha) => {
                   <strong>Box:</strong> {box.numero}
                 </p>
                 <p>
-                  <strong>Pasillo:</strong>{" "}
-                  {obtenerNombrePasillo(box.pasilloId)}
+                  <strong>Pasillo:</strong> {obtenerNombrePasillo(box.pasilloId)}
                 </p>
                 <p>
                   <strong>Horario Disponible:</strong>{" "}

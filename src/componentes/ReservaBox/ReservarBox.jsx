@@ -90,12 +90,22 @@ const ReservarBox = () => {
         return;
       }
 
+      let nuevaHoraFin = horaFin;
+      if (
+        horariosDisponibles.length > 0 &&
+        horaFin !== horariosDisponibles[horariosDisponibles.length - 1]
+      ) {
+        const hour = horaFin.split(":")[0];
+        const nueva_hora = parseInt(hour, 10) - 1; // Asegurar tipo numérico
+        nuevaHoraFin = `${nueva_hora.toString().padStart(2, "0")}:59`;
+      }
+
       const reservaData = {
         boxId: boxSeleccionado,
         usuarioId: state.user.id,
         fecha,
         horaInicio,
-        horaFin,
+        horaFin: nuevaHoraFin,
         estado: true,
       };
 
@@ -161,12 +171,9 @@ const ReservarBox = () => {
     );
     setHorariosDisponibles(hourList);
     console.log("hourList", hourList);
-    // setHoraDesde(response_box.horaInicio);
-    // setHoraHasta(response_box.horaFin);
+
     setFecha(fecha);
     setHorariosBloqueados(horarios);
-
-    // console.log("response actuales", response, horaDesde, horaHasta);
   };
 
   const isHourBlocked = (hour) => {
@@ -236,7 +243,6 @@ const ReservarBox = () => {
               <input
                 type="date"
                 value={fecha}
-                // onChange={(e) => setFecha(e.target.value)}
                 onChange={(e) => handleFechaChange(e.target.value)}
                 min={today}
                 disabled={!boxSeleccionado}
@@ -263,15 +269,6 @@ const ReservarBox = () => {
                   </option>
                 ))}
               </select>
-              {/* <input
-          type="time"
-          value={horaInicio}
-          disabled={!fecha}
-          min={horaDesde}
-          max={horaHasta}
-          onChange={handleTimeChangeInicio}
-          // onChange={(e) => setHoraInicio(e.target.value)}
-        /> */}
             </div>
 
             <div>
@@ -294,15 +291,6 @@ const ReservarBox = () => {
                   </option>
                 ))}
               </select>
-              {/* <input
-          type="time"
-          value={horaFin}
-          disabled={!fecha}
-          // min={horaDesde}
-          // max={horaHasta}
-          // onChange={(e) => setHoraFin(e.target.value)}
-          onChange={handleTimeChangeFin}
-        /> */}
             </div>
             <div className="botones-reservas">
               <button onClick={handleReservarBox}>Reservar Box</button>

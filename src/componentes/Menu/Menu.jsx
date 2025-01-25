@@ -34,16 +34,10 @@ function Menu() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // useEffect = () => {
-  //   console.log("user", state.user);
-  // };
-
   return (
     <div className="container">
       <header className="header">
-        {/* <button className="menu-toggle" onClick={toggleSidebar}>
-          ☰
-        </button> */}
+        
         <div className="menu-toggle" onClick={toggleSidebar}>
           &#9776; {/* Icono de menú */}
         </div>

@@ -10,11 +10,11 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
+  query,
   setDoc,
   updateDoc,
-  query,
   where,
-  orderBy,
 } from "firebase/firestore";
 import { auth, db } from "./FirebaseConfig";
 

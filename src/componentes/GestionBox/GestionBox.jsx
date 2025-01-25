@@ -132,7 +132,7 @@ const GestionBox = () => {
   const handleChangeIdPasillo = async (e) => {
     const idpasillo = e.target.value;
     console.log(nuevoBox.numero, idpasillo);
-    //nuevoBox.numero;
+
     const response = await DBContext.findBox(
       Number(nuevoBox.numero),
       idpasillo

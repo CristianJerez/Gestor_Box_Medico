@@ -56,18 +56,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-/* .sidebar {
-  grid-area: sidebar;
-  background-color: #f4f4f4;
-  padding: 20px;
-  position: absolute;
-  top: 60px;
-  left: -250px;
-  width: 250px;
-  height: calc(100% - 60px);
-  transition: left 0.3s ease;
-  z-index: 1000;
-} */
 
 .sidebar.show {
   left: 0;

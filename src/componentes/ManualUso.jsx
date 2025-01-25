@@ -17,7 +17,8 @@ const ManualUso = () => {
           sistema.
         </li>
         <li>
-          Si no tienes una cuenta, contacta al administrador para registrarte.
+          Si no tienes una cuenta, contacta al administrador para registrarte
+          por medio de tu jefatura.
         </li>
       </ol>
 
@@ -25,16 +26,17 @@ const ManualUso = () => {
       <p>En el menú principal encontrarás las siguientes opciones:</p>
       <ul>
         <li>
-          <strong>Inicio:</strong> Visualiza un resumen de los boxes disponibles
-          y estadísticas relevantes.
+          <strong>Inicio:</strong> Visualiza un resumen de los boxes
+          disponibles.
         </li>
         <li>
-          <strong>Solicitar Box:</strong> Accede al formulario para reservar un
+          <strong>Reservar Box:</strong> Accede al formulario para reservar un
           box clínico.
         </li>
         <li>
-          <strong>Historial:</strong> Consulta tus solicitudes anteriores y su
-          estado.
+          <strong>Ocupación:</strong> Consulta tus solicitudes anteriores,
+          futuras y su estado. Ademas encontras el porcentaje de ocupación de
+          los boxes y los pasillos.
         </li>
         <li>
           <strong>Manual de Uso:</strong> Visualiza esta guía para resolver
@@ -49,8 +51,8 @@ const ManualUso = () => {
       <ol>
         <li>Haz clic en la opción "Solicitar Box" del menú.</li>
         <li>
-          Selecciona la especialidad médica requerida (por ejemplo, neurología,
-          cardiología, endocrinología).
+          Selecciona el número de pasillo y box requerido (por ejemplo, Pasillo
+          1, box 1).
         </li>
         <li>
           Escoge una fecha y hora disponibles en el calendario interactivo.
@@ -100,4 +102,4 @@ const ManualUso = () => {
   );
 };
 
-export {ManualUso} ;
+export { ManualUso };

@@ -140,9 +140,6 @@ const GestionPasillo = () => {
             placeholder="Número de Pasillo"
             value={nuevoPasillo.numero_pasillo}
             onChange={handleChangeNroPasillo}
-            // onChange={(e) =>
-            //   setNuevoPasillo({ ...nuevoPasillo, numero_pasillo: e.target.value })
-            // }
           />
           {errores.numero_pasillo && (
             <span className="error-pasillos">{errores.numero_pasillo}</span>
