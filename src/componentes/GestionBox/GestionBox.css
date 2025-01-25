@@ -1,39 +1,40 @@
 /* Estilo general */
-body {
+.cuerpo-boxes {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
+  background-color: #f4f4f9;
 }
 
 /* Contenedor principal */
-.gestion-box {
+.container-boxes {
+  max-width: 800px;
+  margin: 20px auto;
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Títulos */
-h1,
+.container-boxes h1,
 h2 {
   color: #333;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 /* Formulario */
-.formulario {
-  margin-bottom: 20px;
+.formulario-boxes {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 15px;
+  margin-bottom: 20px;
 }
 
-.formulario input[type="text"],
-.formulario select,
-.formulario input[type="time"],
-.formulario input[type="checkbox"] {
+.formulario-boxes input[type="date"],
+.formulario-boxes input,
+.formulario-boxes select {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -42,21 +43,38 @@ h2 {
   box-sizing: border-box;
 }
 
-/* Etiquetas */
-.formulario label {
+.checkbox-container-boxes {
+  display: flex;
+  align-items: center;
+  gap: 35%; /* Espacio entre el checkbox y el label */
+  padding: 15px;
+  background-color: #f9f9f9; /* Fondo claro */
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+.checkbox-container-boxes input[type="checkbox"] {
+  transform: scale(1.5); /* Agranda el tamaño del checkbox */
+  margin: 0;
+  width: auto;
+}
+
+/* Mensajes de error */
+.error-boxes {
+  color: red;
   font-size: 14px;
-  color: #555;
-  margin-top: 10px;
+  margin-top: -10px;
 }
 
 /* Botones */
-.botones {
-  display: flex;
+.botones-boxes {
+  display: inline-flex;
+  justify-content: space-between;
   gap: 10px;
 }
 
-.botones button {
-  padding: 10px 20px;
+.formulario-boxes button {
+  padding: 10px 15px;
   font-size: 16px;
   color: white;
   background-color: #007bff;
@@ -66,15 +84,15 @@ h2 {
   transition: background-color 0.3s;
 }
 
-.botones button:hover {
+.formulario-boxes button:hover {
   background-color: #0056b3;
 }
 
-.botones button:nth-child(2) {
+.formulario-boxes button:nth-child(2) {
   background-color: #dc3545;
 }
 
-.botones button:nth-child(2):hover {
+.formulario-boxes button:nth-child(2):hover {
   background-color: #b52a38;
 }
 
@@ -83,24 +101,30 @@ h2 {
   margin-top: 20px;
 }
 
-.box-item {
-  padding: 15px;
+.info-boxes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 10px;
   background-color: #f9f9f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.box-item p {
+.info-boxes p {
   margin: 0;
   font-size: 14px;
   color: #555;
 }
 
-.box-item button {
+/* Acciones */
+.acciones-boxes {
+  display: flex;
+  gap: 10px;
+}
+
+.acciones-boxes button {
   padding: 5px 10px;
   font-size: 14px;
   color: white;
@@ -110,49 +134,34 @@ h2 {
   transition: background-color 0.3s;
 }
 
-.box-item button:first-child {
+.acciones-boxes button:first-child {
   background-color: #ffc107;
 }
 
-.box-item button:first-child:hover {
+.acciones-boxes button:first-child:hover {
   background-color: #e0a800;
 }
 
-.box-item button:last-child {
+.acciones-boxes button:last-child {
   background-color: #dc3545;
 }
 
-.box-item button:last-child:hover {
+.acciones-boxes button:last-child:hover {
   background-color: #b52a38;
-}
-
-/* Mensajes de error */
-.error {
-  color: red;
-  font-size: 14px;
-  margin-top: -10px;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-  .formulario {
+  .formulario-boxes {
     grid-template-columns: 1fr;
   }
 
-  .botones {
+  .acciones-boxes {
     flex-direction: column;
+    gap: 5px;
   }
 
-  .botones button {
+  .acciones-boxes button {
     width: 100%;
-  }
-
-  .box-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .box-item p {
-    margin-bottom: 10px;
   }
 }

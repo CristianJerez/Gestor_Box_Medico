@@ -14,6 +14,7 @@ import {
   updateDoc,
   query,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { auth, db } from "./FirebaseConfig";
 
@@ -119,31 +120,31 @@ const DBContext = {
     }
   },
 
-  // async deleteUser(id) {
-  //   if (!id) {
-  //     console.error("ID no proporcionado para eliminar el usuario.");
-  //     throw new Error("ID no válido.");
-  //   }
-  //   try {
-  //     await deleteDoc(doc(db, "usuarios", id));
-  //     console.log(`Usuario con ID ${id} eliminado exitosamente.`);
-  //   } catch (error) {
-  //     console.error("Error al eliminar usuario:", error.message);
-  //     throw error;
-  //   }
-  // },
-
   // Obtener pasillos
   async getPasillos() {
     try {
       const pasillosCollectionRef = collection(db, "pasillos");
-      const querySnapshot = await getDocs(pasillosCollectionRef);
+      const q = query(pasillosCollectionRef, orderBy("numero_pasillo", "asc"));
+      const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
     } catch (error) {
       console.error("Error al obtener pasillos:", error.message);
+      throw error;
+    }
+  },
+
+  async getPasillo(idPasillo) {
+    try {
+      const CollectionRef = collection(db, "pasillos");
+      const q = query(CollectionRef, where("numero_pasillo", "==", idPasillo));
+      const data = await getDocs(q);
+      const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      return response;
+    } catch (error) {
+      console.error("Error al obtener el pasillo:", error);
       throw error;
     }
   },
@@ -197,13 +198,48 @@ const DBContext = {
   async getBoxes() {
     try {
       const boxesCollectionRef = collection(db, "boxes");
-      const querySnapshot = await getDocs(boxesCollectionRef);
+      const q = query(boxesCollectionRef, orderBy("numero", "asc"));
+      const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
     } catch (error) {
       console.error("Error al obtener boxes:", error.message);
+      throw error;
+    }
+  },
+
+  async getBox(idBox) {
+    try {
+      const boxDocRef = doc(db, "boxes", idBox);
+      const boxDoc = await getDoc(boxDocRef);
+      if (boxDoc.exists()) {
+        return { id: boxDoc.id, ...boxDoc.data() };
+      } else {
+        throw new Error("Box no encontrado");
+      }
+    } catch (error) {
+      console.error("Error al obtener el box:", error);
+      throw error;
+    }
+  },
+
+  async findBox(numerobox, idPasillo) {
+    try {
+      console.log("entro find", numerobox, idPasillo);
+      const CollectionRef = collection(db, "boxes");
+      const q = query(
+        CollectionRef,
+        where("numero", "==", numerobox),
+        where("pasilloId", "==", idPasillo)
+      );
+      const data = await getDocs(q);
+      console.log("find", data);
+      const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      return response;
+    } catch (error) {
+      console.error("Error al buscar box:", error);
       throw error;
     }
   },
@@ -280,6 +316,19 @@ const DBContext = {
     }
   },
 
+  async getReservasDelDia(fecha) {
+    try {
+      const CollectionRef = collection(db, "reservas");
+      const q = query(CollectionRef, where("fecha", "==", fecha));
+      const data = await getDocs(q);
+      const response = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      return response;
+    } catch (error) {
+      console.error("Error fetching reservations: ", error);
+      throw error;
+    }
+  },
+
   async addReserva(nuevaReserva) {
     const CollectionRef = collection(db, "reservas");
     await addDoc(CollectionRef, nuevaReserva);
@@ -299,7 +348,6 @@ const DBContext = {
       console.error("Error al eliminar el usuario:", error);
     }
   },
-
 };
 
 export { DBContext };

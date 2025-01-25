@@ -1,5 +1,5 @@
-/* Estilos generales */
-.cuerpo {
+/* Estilo general */
+.cuerpo-usuario {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -7,175 +7,159 @@
 }
 
 /* Contenedor principal */
-.gestion-usuarios-container {
-  /* display: grid; */
-  grid-template-columns: repeat(12, 1fr);
-  gap: 15px;
-  max-width: 600px;
-  margin: 10px auto;
+.container-usuarios {
+  max-width: 800px;
+  margin: 20px auto;
   padding: 20px;
-}
-
-.gestion-usuarios {
-  grid-column: span 8;
-  grid-column-start: 2;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
 }
 
 /* Títulos */
-.gestion-usuarios h1,
-.gestion-usuarios h2 {
-  text-align: center;
+.container-usuarios h1,
+h2 {
   color: #333;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 /* Formulario */
-.gestion-usuarios form {
-  display: flex;
-  flex-direction: column;
+.formulario-usuarios {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 15px;
+  margin-bottom: 20px;
 }
 
-.gestion-usuarios label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.gestion-usuarios input,
-.gestion-usuarios select,
-.gestion-usuarios textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.formulario-usuarios input {
   width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
-.gestion-usuarios button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: flex-start;
-}
-
-.gestion-usuarios button:hover {
-  background-color: #0056b3;
-}
-
-/* Lista de usuarios */
-.lista-usuarios {
-  margin-top: 20px;
-}
-
-.usuario {
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
+.checkbox-container-usuarios {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 35%; /* Espacio entre el checkbox y el label */
+  padding: 15px;
+  background-color: #f9f9f9; /* Fondo claro */
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
 }
 
-.usuario p {
+.checkbox-container-usuarios input[type="checkbox"] {
+  transform: scale(1.5); /* Agranda el tamaño del checkbox */
   margin: 0;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.6;
+  width: auto;
 }
 
-/* Acciones */
-.acciones {
+/* Mensajes de error */
+.error-usuarios {
+  color: red;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+/* Botones */
+.botones-usuarios {
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
-.acciones button {
-  padding: 8px 12px;
-  font-size: 14px;
+.formulario-usuarios button {
+  padding: 10px 15px;
+  font-size: 16px;
   color: white;
+  background-color: #007bff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.acciones button:first-child {
-  background-color: #28a745;
+.formulario-usuarios button:hover {
+  background-color: #0056b3;
 }
 
-.acciones button:first-child:hover {
-  background-color: #218838;
-}
-
-.acciones button:last-child {
+.formulario-usuarios button:nth-child(2) {
   background-color: #dc3545;
 }
 
-.acciones button:last-child:hover {
+.formulario-usuarios button:nth-child(2):hover {
   background-color: #b52a38;
 }
 
-/* Responsivo */
-@media (max-width: 768px) {
-  .gestion-usuarios-container {
-    padding: 10px;
-  }
-
-  .gestion-usuarios {
-    grid-column: span 12;
-    grid-column-start: 1;
-  }
-
-  .gestion-usuarios form {
-    gap: 10px;
-  }
-
-  .gestion-usuarios button {
-    width: 100%;
-    align-self: center;
-  }
+/* Lista de pasillos */
+.lista-usuarios {
+  margin-top: 20px;
 }
 
-/* Botón de Guardar (verde) */
-.btn-guardar {
-  background-color: #28a745;
+.info-usuario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
 }
 
-.btn-guardar:hover {
-  background-color: #218838;
+.info-usuario p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
 }
 
-/* Botón de Editar (amarillo) */
-.btn-editar {
+/* Acciones */
+.acciones-usuario {
+  display: flex;
+  gap: 10px;
+}
+
+.acciones-usuario button {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.acciones-usuario button:first-child {
   background-color: #ffc107;
 }
 
-.btn-editar:hover {
+.acciones-usuario button:first-child:hover {
   background-color: #e0a800;
 }
 
-/* Botón de Eliminar (rojo) */
-.btn-eliminar {
+.acciones-usuario button:last-child {
   background-color: #dc3545;
 }
 
-.btn-eliminar:hover {
+.acciones-usuario button:last-child:hover {
   background-color: #b52a38;
 }
 
-/* Botón de Cancelar (gris claro, opcional) */
-.btn-cancelar {
-  background-color: #6c757d;
-}
+/* Responsividad */
+@media (max-width: 768px) {
+  .formulario {
+    grid-template-columns: 1fr;
+  }
 
-.btn-cancelar:hover {
-  background-color: #5a6268;
+  .acciones-usuario {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .acciones-usuario button {
+    width: 100%;
+  }
 }

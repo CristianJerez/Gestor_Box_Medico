@@ -1,4 +1,4 @@
-.elbody {
+body {
   margin: 0;
   font-family: Arial, sans-serif;
 }
@@ -23,76 +23,108 @@
   padding: 0 20px;
 }
 
+.header button {
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+  background-color: #aeafb1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.header button:hover {
+  background-color: #458daa;
+}
+
 .header h1 {
   margin: 0;
   color: #ffffff;
 }
+
 .header h2 {
-  margin: 0;
   color: #ffffff;
+  margin: 0;
 }
-.header button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.header button:hover {
-  background-color: #d32f2f;
-}
-
-/* .sidebar {
-  grid-area: sidebar;
-  background-color: rgba(65, 61, 65, 0.159);
-  padding: 15px;
-} */
 
 .sidebar {
   grid-area: sidebar;
   background-color: rgba(65, 61, 65, 0.159);
-  color: white;
+  /* color: white; */
   padding: 20px;
   display: flex;
   flex-direction: column;
 }
+/* .sidebar {
+  grid-area: sidebar;
+  background-color: #f4f4f4;
+  padding: 20px;
+  position: absolute;
+  top: 60px;
+  left: -250px;
+  width: 250px;
+  height: calc(100% - 60px);
+  transition: left 0.3s ease;
+  z-index: 1000;
+} */
+
+.sidebar.show {
+  left: 0;
+}
 
 .content {
   grid-area: content;
-  padding: 15px;
+  padding: 10px;
+}
+
+.menu-toggle {
+  display: none;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
   .container {
     grid-template-areas:
       "header"
-      "content"
-      "sidebar";
-    /* grid-template-rows: 60px 1fr 1fr; */
+      "content";
+    grid-template-rows: 60px 1fr;
     grid-template-columns: 1fr;
   }
 
+  .header h1 {
+    display: none;
+  }
+
+  .header h2 {
+    font-size: 1em;
+  }
+
   .sidebar {
-    position: absolute;
-    top: 60px;
-    left: -250px;
-    width: 250px;
-    height: calc(100% - 60px);
-    transition: left 0.3s ease;
-    z-index: 1000;
-  }
-
-  .sidebar.show {
-    left: 0;
-  }
-
-  .content {
-    padding: 10px;
+    display: none;
   }
 
   .menu-toggle {
     display: block;
-    cursor: pointer;
+  }
+
+  .sidebar.show {
+    display: block;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 250px;
+    height: calc(100% - 60px);
+    background-color: #f4f4f4;
+    z-index: 1000;
+  }
+
+  .modal {
+    width: 90%;
+    max-width: none;
+    height: auto;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }

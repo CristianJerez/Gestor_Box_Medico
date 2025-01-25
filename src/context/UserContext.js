@@ -6,30 +6,58 @@ import { auth } from "../FirebaseConfig";
 export const UserContext = createContext();
 
 export const AppProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
   const [state, setState] = useState({
     user: null,
-    isAuthenticated: false,
+    isAuthenticated: null,
   });
-
   const [ls_user, saveItem] = useLocalStorage("user", {});
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      if (firebaseUser) {
-        const storedUser = ls_user || {};
-        setState({
-          user: storedUser,
-          isAuthenticated: true,
-        });
-      } else {
-        setState({
-          user: null,
-          isAuthenticated: false,
-        });
-      }
-    });
-
-    return () => unsubscribe();
+    const cargaInicial = async () => {
+      const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+        if (firebaseUser) {
+          if (ls_user && Object.keys(ls_user).length > 0) {
+            console.log("user context entro ", ls_user);
+            setState((prevState) => ({
+              ...prevState,
+              user: ls_user,
+              isAuthenticated: true,
+            }));
+          }
+          //   setState((prevState) => ({
+          //     ...prevState,
+          //     user: ls_user,
+          //     isAuthenticated: true,
+          //   }));
+          // } else {
+          //   setState({
+          //     user: null,
+          //     isAuthenticated: false,
+          //   });
+        }
+      });
+      setLoading(false);
+      return () => unsubscribe();
+    };
+    cargaInicial();
+    console.log("recarga contexto", loading);
+    // const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+    //   if (firebaseUser) {
+    //     setState((prevState) => ({
+    //       ...prevState,
+    //       user: ls_user,
+    //       isAuthenticated: true,
+    //     }));
+    //   } else {
+    //     setState({
+    //       user: null,
+    //       isAuthenticated: false,
+    //     });
+    //   }
+    // });
+    // setItsOK(true);
+    // return () => unsubscribe();
   }, [ls_user]);
 
   const loginUser = async (email, password) => {
@@ -57,6 +85,7 @@ export const AppProvider = ({ children }) => {
         user: null,
         isAuthenticated: false,
       });
+      await auth.signOut();
     } catch (error) {
       console.error("Error al cerrar sesión:", error.message);
     }
@@ -65,6 +94,7 @@ export const AppProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        loading,
         state,
         loginUser,
         logout,

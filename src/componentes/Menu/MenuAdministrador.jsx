@@ -3,7 +3,7 @@ import "./MenuListado.css";
 function MenuAdministrador(props) {
   return (
     <div>
-      <h1>Menu Administrador</h1>
+      <h3>Menu Administrador</h3>
       <ul className="menu-listado">
         <li>
           <button onClick={() => props.setRenderizar("gestionUsuario")}>

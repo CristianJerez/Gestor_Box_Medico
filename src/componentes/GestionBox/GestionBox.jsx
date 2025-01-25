@@ -15,6 +15,14 @@ const GestionBox = () => {
   const [editando, setEditando] = useState(null);
   const [errores, setErrores] = useState({});
 
+  const generateHourList = () => {
+    const hours = [];
+    for (let i = 0; i < 24; i++) {
+      const hour = i.toString().padStart(2, "0") + ":00";
+      hours.push(hour);
+    }
+    return hours;
+  };
   // Fetch data from Firestore
   const fetchBoxes = async () => {
     try {
@@ -121,86 +129,158 @@ const GestionBox = () => {
     }
   };
 
+  const handleChangeIdPasillo = async (e) => {
+    const idpasillo = e.target.value;
+    console.log(nuevoBox.numero, idpasillo);
+    //nuevoBox.numero;
+    const response = await DBContext.findBox(
+      Number(nuevoBox.numero),
+      idpasillo
+    );
+    console.log("find", response);
+    if (response.length > 0) {
+      setErrores({ pasilloId: "El número de box ya existe en este pasillo." });
+      setNuevoBox({ ...nuevoBox, pasilloId: "" });
+    } else {
+      setErrores({ pasilloId: "" });
+      setNuevoBox({ ...nuevoBox, pasilloId: idpasillo });
+    }
+  };
+
+  const timeToMinutes = (time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const handleChangeHoraTermino = (e) => {
+    const selectedTime = e.target.value;
+
+    if (timeToMinutes(selectedTime) <= timeToMinutes(nuevoBox.horaInicio)) {
+      setErrores({
+        HoraTermino:
+          "Hora de término no puede ser menor o igual a la hora de inicio.",
+      });
+      setNuevoBox({ ...nuevoBox, horaFin: "" });
+    } else {
+      setErrores({ HoraTermino: "" }); // Limpiar error
+      setNuevoBox({ ...nuevoBox, horaFin: selectedTime });
+    }
+  };
+
   return (
-    <div className="gestion-box">
-      <h1>Gestión de Boxes</h1>
+    <div className="cuerpo-boxes">
+      <div className="container-boxes">
+        <h1>Gestión de Boxes</h1>
 
-      <div className="formulario">
-        <input
-          type="text"
-          placeholder="Número del Box"
-          value={nuevoBox.numero}
-          onChange={(e) => setNuevoBox({ ...nuevoBox, numero: e.target.value })}
-        />
-        {errores.numero && <span className="error">{errores.numero}</span>}
+        <div className="formulario-boxes">
+          <input
+            type="text"
+            placeholder="Número del Box"
+            value={nuevoBox.numero}
+            onChange={(e) =>
+              setNuevoBox({ ...nuevoBox, numero: e.target.value })
+            }
+          />
+          {errores.numero && (
+            <span className="error-boxes">{errores.numero}</span>
+          )}
 
-        <select
-          value={nuevoBox.pasilloId}
-          onChange={(e) =>
-            setNuevoBox({ ...nuevoBox, pasilloId: e.target.value })
-          }
-        >
-          <option value="">Selecciona un pasillo</option>
-          {listaPasillos.map((pasillo) => (
-            <option key={pasillo.id} value={pasillo.id}>
-              {`Pasillo ${pasillo.numero_pasillo}`}
+          <select
+            value={nuevoBox.pasilloId}
+            onChange={handleChangeIdPasillo}
+            disabled={!nuevoBox.numero}
+          >
+            <option value="">Selecciona un pasillo</option>
+            {listaPasillos.map((pasillo) => (
+              <option key={pasillo.id} value={pasillo.id}>
+                {`Pasillo ${pasillo.numero_pasillo}`}
+              </option>
+            ))}
+          </select>
+          {errores.pasilloId && (
+            <span className="error-boxes">{errores.pasilloId}</span>
+          )}
+
+          <label>Hora de inicio</label>
+          <select
+            disabled={!nuevoBox.pasilloId}
+            value={nuevoBox.horaInicio}
+            onChange={(e) =>
+              setNuevoBox({ ...nuevoBox, horaInicio: e.target.value })
+            }
+          >
+            <option key="" value="" disabled>
+              Seleccione hora de inicio
             </option>
-          ))}
-        </select>
-        {errores.pasilloId && (
-          <span className="error">{errores.pasilloId}</span>
-        )}
+            {generateHourList().map((hour) => (
+              <option key={hour} value={hour}>
+                {hour}
+              </option>
+            ))}
+          </select>
 
-        <label>Hora de inicio</label>
-        <input
-          type="time"
-          value={nuevoBox.horaInicio}
-          onChange={(e) =>
-            setNuevoBox({ ...nuevoBox, horaInicio: e.target.value })
-          }
-        />
-        <label>Hora de término</label>
-        <input
-          type="time"
-          value={nuevoBox.horaFin}
-          onChange={(e) =>
-            setNuevoBox({ ...nuevoBox, horaFin: e.target.value })
-          }
-        />
-        <label>Box operativo</label>
-        <input
-          type="checkbox"
-          checked={nuevoBox.disponibilidad}
-          onChange={(e) =>
-            setNuevoBox({ ...nuevoBox, disponibilidad: e.target.checked })
-          }
-        />
-        {errores.horario && <span className="error">{errores.horario}</span>}
+          <label>Hora de término</label>
+          <select
+            disabled={!nuevoBox.horaInicio}
+            value={nuevoBox.horaFin}
+            onChange={handleChangeHoraTermino}
+          >
+            <option key="" value="" disabled>
+              Seleccione hora de término
+            </option>
+            {generateHourList().map((hour) => (
+              <option key={hour} value={hour}>
+                {hour}
+              </option>
+            ))}
+          </select>
+          {errores.HoraTermino && (
+            <span className="error-boxes">{errores.HoraTermino}</span>
+          )}
 
-        <div className="botones">
-          <button onClick={guardarBox}>
-            {editando ? "Actualizar Box" : "Guardar Box"}
-          </button>
-          {editando && <button onClick={resetFormulario}>Cancelar</button>}
-        </div>
-      </div>
-
-      <div className="lista-boxes">
-        <h2>Lista de Boxes</h2>
-        {listaBoxes.map((box) => (
-          <div key={box.id} className="box-item">
-            <p>
-              {`Número: ${box.numero}, Pasillo: ${
-                listaPasillos.find((p) => p.id === box.pasilloId)
-                  ?.numero_pasillo || "Desconocido"
-              }, Horario: ${box.horaInicio} - ${box.horaFin}, ${
-                box.disponibilidad ? "Operativo" : "No operativo"
-              }`}
-            </p>
-            <button onClick={() => editarBox(box)}>Editar</button>
-            <button onClick={() => eliminarBox(box.id)}>Eliminar</button>
+          <div className="checkbox-container-boxes">
+            <label>Box operativo</label>
+            <input
+              disabled={!nuevoBox.horaFin}
+              type="checkbox"
+              checked={nuevoBox.disponibilidad}
+              onChange={(e) =>
+                setNuevoBox({ ...nuevoBox, disponibilidad: e.target.checked })
+              }
+            />
           </div>
-        ))}
+          {errores.horario && (
+            <span className="error-boxes">{errores.horario}</span>
+          )}
+
+          <div className="botones-boxes">
+            <button onClick={guardarBox}>
+              {editando ? "Actualizar Box" : "Guardar Box"}
+            </button>
+            {editando && <button onClick={resetFormulario}>Cancelar</button>}
+          </div>
+        </div>
+
+        <div className="lista-boxes">
+          <h2>Lista de Boxes</h2>
+          {listaBoxes.map((box) => (
+            <div key={box.id} className="info-boxes">
+              <p>
+                {`Número: ${box.numero}, Pasillo: ${
+                  listaPasillos.find((p) => p.id === box.pasilloId)
+                    ?.numero_pasillo || "Desconocido"
+                }, Horario: ${box.horaInicio} - ${box.horaFin}, ${
+                  box.disponibilidad ? "Operativo" : "No operativo"
+                }`}
+              </p>
+
+              <div className="acciones-boxes">
+                <button onClick={() => editarBox(box)}>Editar</button>
+                <button onClick={() => eliminarBox(box.id)}>Eliminar</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

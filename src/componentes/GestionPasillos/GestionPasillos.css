@@ -1,5 +1,5 @@
 /* Estilo general */
-body {
+.cuerpo-pasillos {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ body {
 }
 
 /* Contenedor principal */
-.gestion-pasillo {
+.container-pasillos {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
@@ -17,7 +17,7 @@ body {
 }
 
 /* Títulos */
-h1,
+.container-pasillos h1,
 h2 {
   color: #333;
   text-align: center;
@@ -25,14 +25,14 @@ h2 {
 }
 
 /* Formulario */
-.formulario {
+.formulario-pasillos {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
   margin-bottom: 20px;
 }
 
-.formulario input {
+.formulario-pasillos input {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -42,20 +42,20 @@ h2 {
 }
 
 /* Mensajes de error */
-.error {
+.error-pasillos {
   color: red;
   font-size: 14px;
   margin-top: -10px;
 }
 
 /* Botones */
-.botones {
-  display: flex;
+.botones-pasillos {
+  display: inline-flex;
   justify-content: space-between;
   gap: 10px;
 }
 
-.botones button {
+.formulario-pasillos button {
   padding: 10px 15px;
   font-size: 16px;
   color: white;
@@ -66,15 +66,15 @@ h2 {
   transition: background-color 0.3s;
 }
 
-.botones button:hover {
+.formulario-pasillos button:hover {
   background-color: #0056b3;
 }
 
-.botones button:nth-child(2) {
+.formulario-pasillos button:nth-child(2) {
   background-color: #dc3545;
 }
 
-.botones button:nth-child(2):hover {
+.formulario-pasillos button:nth-child(2):hover {
   background-color: #b52a38;
 }
 
@@ -83,7 +83,7 @@ h2 {
   margin-top: 20px;
 }
 
-.pasillo {
+.info-pasillos {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -94,19 +94,19 @@ h2 {
   background-color: #f9f9f9;
 }
 
-.pasillo p {
+.info-pasillos p {
   margin: 0;
   font-size: 14px;
   color: #555;
 }
 
 /* Acciones */
-.acciones {
+.acciones-pasillos {
   display: flex;
   gap: 10px;
 }
 
-.acciones button {
+.acciones-pasillos button {
   padding: 5px 10px;
   font-size: 14px;
   color: white;
@@ -116,34 +116,34 @@ h2 {
   transition: background-color 0.3s;
 }
 
-.acciones button:first-child {
+.acciones-pasillos button:first-child {
   background-color: #ffc107;
 }
 
-.acciones button:first-child:hover {
+.acciones-pasillos button:first-child:hover {
   background-color: #e0a800;
 }
 
-.acciones button:last-child {
+.acciones-pasillos button:last-child {
   background-color: #dc3545;
 }
 
-.acciones button:last-child:hover {
+.acciones-pasillos button:last-child:hover {
   background-color: #b52a38;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-  .formulario {
+  .formulario-pasillos {
     grid-template-columns: 1fr;
   }
 
-  .acciones {
+  .acciones-pasillos {
     flex-direction: column;
     gap: 5px;
   }
 
-  .acciones button {
+  .acciones-pasillos button {
     width: 100%;
   }
 }

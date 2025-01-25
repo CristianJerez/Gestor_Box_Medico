@@ -1,0 +1,62 @@
+.container-ocupacion {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-ocupacion button {
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+  background-color: #97c7ee;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.container-ocupacion button:hover {
+  background-color: #458daa;
+}
+
+.container-ocupacion input[type="date"] {
+  width: 30%;
+  padding: 10px;
+  margin-left: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .print-container {
+    width: 100%;
+    height: 100vh; /* Ocupa el 100% de la altura de la vista */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .print-container div {
+    margin: 0;
+    padding: 10px;
+    border: 1px solid black;
+    width: 100%; /* Asegura que cada div ocupe el 100% del ancho */
+    box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+  }
+}

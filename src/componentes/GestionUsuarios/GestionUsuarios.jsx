@@ -18,6 +18,7 @@ const GestionUsuarios = () => {
     try {
       const users = await DBContext.getUsers();
       setListaUsuarios(users);
+      console.log("Usuarios obtenidos correctamente.", users);
     } catch (error) {
       console.error("Error al obtener usuarios:", error.message);
     }
@@ -35,10 +36,12 @@ const GestionUsuarios = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!nombreRegex.test(nuevoUsuario.nombre)) {
-      nuevosErrores.nombre = "El nombre debe contener solo letras y al menos 6 caracteres.";
+      nuevosErrores.nombre =
+        "El nombre debe contener solo letras y al menos 6 caracteres.";
     }
     if (!contrasenaRegex.test(nuevoUsuario.contrasena) && !editando) {
-      nuevosErrores.contrasena = "La contraseña debe ser alfanumérica y tener al menos 8 caracteres.";
+      nuevosErrores.contrasena =
+        "La contraseña debe ser alfanumérica y tener al menos 8 caracteres.";
     }
     if (!emailRegex.test(nuevoUsuario.email)) {
       nuevosErrores.email = "El correo electrónico no es válido.";
@@ -57,7 +60,7 @@ const GestionUsuarios = () => {
         await DBContext.editUser(editando, {
           nombre: nuevoUsuario.nombre,
           email: nuevoUsuario.email,
-          rol: nuevoUsuario.rol ? "admin" : "usuario",
+          rol: nuevoUsuario.rol,
         });
         console.log(`Usuario con ID ${editando} actualizado.`);
       } else {
@@ -65,7 +68,7 @@ const GestionUsuarios = () => {
           nombre: nuevoUsuario.nombre,
           email: nuevoUsuario.email,
           password: nuevoUsuario.contrasena,
-          rol: nuevoUsuario.rol ? "admin" : "usuario",
+          rol: nuevoUsuario.rol,
         });
         console.log("Nuevo usuario creado.");
       }
@@ -103,49 +106,58 @@ const GestionUsuarios = () => {
       console.error("Error al eliminar usuario:", error.message);
     }
   };
-  
 
   return (
-    <div className="cuerpo">
-      <div className="gestion-usuarios-container">
+    <div className="cuerpo-usuario">
+      <div className="container-usuarios">
         <h1>Gestión de Usuarios</h1>
-        <div className="formulario">
+        <div className="formulario-usuarios">
           <input
             type="text"
             placeholder="Nombre"
             value={nuevoUsuario.nombre}
-            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })}
+            onChange={(e) =>
+              setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })
+            }
           />
-          {errores.nombre && <p className="error">{errores.nombre}</p>}
+          {errores.nombre && <p className="error-usuarios">{errores.nombre}</p>}
 
           <input
             type="email"
             placeholder="Email"
             value={nuevoUsuario.email}
-            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })}
+            onChange={(e) =>
+              setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })
+            }
           />
-          {errores.email && <p className="error">{errores.email}</p>}
+          {errores.email && <p className="error-usuarios">{errores.email}</p>}
 
           {!editando && (
             <input
               type="password"
               placeholder="Contraseña"
               value={nuevoUsuario.contrasena}
-              onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, contrasena: e.target.value })}
+              onChange={(e) =>
+                setNuevoUsuario({ ...nuevoUsuario, contrasena: e.target.value })
+              }
             />
           )}
-          {errores.contrasena && <p className="error">{errores.contrasena}</p>}
+          {errores.contrasena && (
+            <p className="error-usuarios">{errores.contrasena}</p>
+          )}
 
-          <label>
+          <div className="checkbox-container-usuarios">
+            <label>¿Es administrador?</label>
             <input
               type="checkbox"
               checked={nuevoUsuario.rol}
-              onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.checked })}
+              onChange={(e) =>
+                setNuevoUsuario({ ...nuevoUsuario, rol: e.target.checked })
+              }
             />
-            ¿Es administrador?
-          </label>
+          </div>
 
-          <div className="botones">
+          <div className="botones-usuarios">
             <button className="btn-guardar" onClick={guardarUsuario}>
               {editando ? "Actualizar Usuario" : "Guardar Usuario"}
             </button>
@@ -153,7 +165,12 @@ const GestionUsuarios = () => {
               <button
                 className="btn-cancelar"
                 onClick={() => {
-                  setNuevoUsuario({ nombre: "", email: "", contrasena: "", rol: false });
+                  setNuevoUsuario({
+                    nombre: "",
+                    email: "",
+                    contrasena: "",
+                    rol: false,
+                  });
                   setEditando(null);
                 }}
               >
@@ -162,29 +179,36 @@ const GestionUsuarios = () => {
             )}
           </div>
         </div>
-      </div>
 
-      <div className="lista-usuarios">
-        <h2>Lista de Usuarios</h2>
-        {listaUsuarios.map((usuario) => (
-          <div key={usuario.id} className="usuario">
-            <p>
-              <strong>Nombre:</strong> {usuario.nombre}
-              <br />
-              <strong>Email:</strong> {usuario.email}
-              <br />
-              <strong>Rol:</strong> {usuario.rol === "admin" ? "Administrador" : "Usuario"}
-            </p>
-            <div className="acciones">
-              <button className="btn-editar" onClick={() => editarUsuario(usuario)}>
-                Editar
-              </button>
-              <button className="btn-eliminar" onClick={() => eliminarUsuario(usuario.id)}>
-                Eliminar
-              </button>
+        <div className="lista-usuarios">
+          <h2>Lista de Usuarios</h2>
+          {listaUsuarios.map((usuario) => (
+            <div key={usuario.id} className="info-usuario">
+              <p>
+                <strong>Nombre:</strong> {usuario.nombre}
+                <br />
+                <strong>Email:</strong> {usuario.email}
+                <br />
+                <strong>Rol:</strong>{" "}
+                {usuario.rol === true ? "Administrador" : "Usuario"}
+              </p>
+              <div className="acciones-usuario">
+                <button
+                  className="btn-editar"
+                  onClick={() => editarUsuario(usuario)}
+                >
+                  Editar
+                </button>
+                <button
+                  className="btn-eliminar"
+                  onClick={() => eliminarUsuario(usuario.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
