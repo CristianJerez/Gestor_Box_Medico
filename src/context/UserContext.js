@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DBContext } from "../DBContext";
-import { useLocalStorage } from "../useLocalStorage";
 import { auth } from "../FirebaseConfig";
+import { useLocalStorage } from "../useLocalStorage";
 
 export const UserContext = createContext();
 
@@ -25,16 +25,6 @@ export const AppProvider = ({ children }) => {
               isAuthenticated: true,
             }));
           }
-          //   setState((prevState) => ({
-          //     ...prevState,
-          //     user: ls_user,
-          //     isAuthenticated: true,
-          //   }));
-          // } else {
-          //   setState({
-          //     user: null,
-          //     isAuthenticated: false,
-          //   });
         }
       });
       setLoading(false);
@@ -42,22 +32,6 @@ export const AppProvider = ({ children }) => {
     };
     cargaInicial();
     console.log("recarga contexto", loading);
-    // const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-    //   if (firebaseUser) {
-    //     setState((prevState) => ({
-    //       ...prevState,
-    //       user: ls_user,
-    //       isAuthenticated: true,
-    //     }));
-    //   } else {
-    //     setState({
-    //       user: null,
-    //       isAuthenticated: false,
-    //     });
-    //   }
-    // });
-    // setItsOK(true);
-    // return () => unsubscribe();
   }, [ls_user]);
 
   const loginUser = async (email, password) => {
